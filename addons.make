@@ -1,0 +1,8 @@
+ofxAssimpModelLoader
+ofxEasing
+ofxJSON
+ofxMSAOpenCL
+ofxMidi
+ofxOpenCv
+ofxOsc
+ofxPostProcessing
