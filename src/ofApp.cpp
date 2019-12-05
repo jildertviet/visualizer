@@ -11,6 +11,7 @@
 #define USE_SERVER  true
 #define FBO_DRAW_MIDDLE_ONLY true
 
+// Just a comment to test git
 //--------------------------------------------------------------
 void ofApp::setup() {
     if(USE_FBO){
