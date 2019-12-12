@@ -1,42 +1,40 @@
 #include "ofApp.h"
 
-#define FRAMERATE   60
 #define FULLSCREEN  false
-#define USE_FBO false
-//#define FBO_WIDTH   3840
-//#define FBO_HEIGHT  2160
-#define FBO_WIDTH   2560
-#define FBO_HEIGHT  800
+
 #define FBO_STRETCH_SCREEN  false
 #define USE_SERVER  true
 #define FBO_DRAW_MIDDLE_ONLY true
 
-// Just a comment to test git
 //--------------------------------------------------------------
 void ofApp::setup() {
-    if(USE_FBO){
-        left.allocate(1280, 800, 3);
+    if(bUseFbo){
+        left.allocate(size.x, size.y, 3);
 //        right.allocate(1280, 800, 3);
         
         ofFbo::Settings fs; // For export quality
         fs.numSamples = 8;
-        fs.width = FBO_WIDTH;
-        fs.height = FBO_HEIGHT;
+        fs.width = size.x * 2; // Weird to do this here...
+        fs.height = size.y;
         fs.internalformat = GL_RGB;
         fs.useStencil = true;
         f.allocate(fs);
         
         mesh.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
         
+//        size.x *= 0.5; // TEST (window size is smaller
+        texCoords = {glm::vec2(0,0), glm::vec2(size.x, 0), glm::vec2(size.x, size.y), glm::vec2(0, size.y)};
+        meshVertices = {glm::vec3(0, 0, 0), glm::vec3(size.x, 0, 0), glm::vec3(size.x, size.y, 0), glm::vec3(0, size.y, 0)};
         for(char i=0; i<4; i++){
-            mesh.addTexCoord(texCoords[i] + ofVec2f(1280, 0)); // Center piece
+            mesh.addTexCoord(texCoords[i] + glm::vec2(size.x, 0)); // Center piece
             mesh.addVertex(meshVertices[i]);
         }
+//        size.x *= 2; // TEST
     }
 
     if(!FULLSCREEN)
-        ofSetWindowShape(1280, 800);
-    
+        ofSetWindowShape(size.x, size.y); // TEST
+
     ofSetCircleResolution(360);
     ofSetFullscreen(FULLSCREEN);
     ofBackground(0);
@@ -44,26 +42,20 @@ void ofApp::setup() {
     
 //    ofSetBackgroundAuto(false);
 //    ofSetVerticalSync(true);
-    ofSetFrameRate(FRAMERATE);
+    ofSetFrameRate(frameRate);
 //    ofEnableSmoothing(); // CAUSES FRAMERATE DROPS
     ofEnableAlphaBlending();
     
     visualizer = new Visualizer();
+    visualizer->fitFadeScreen(size); // Also on window-resize!?
     parser = new MsgParser(visualizer);
     
     GUIreceiver.setup(6060);
     SCreceiver.setup(6061);
     spaceNavReceiver.setup(8609);
     visualizer->receiver.setup(4040);
-    GUIsender.setup("127.0.0.1", 6062);
-    SCsender.setup("127.0.0.1", 6063);
     parser->SCsender = &SCsender;
     visualizer->SCsender = &SCsender;
-
-    //if(USE_SERVER){
-     //   syphonServerLeft.setName("JildertSyphonLeft");
-//        syphonServerRight.setName("JildertSyphonRight");
-    //}
     
     ofxOscMessage m = visualizer->getAllEvents();
     cout << m.getNumArgs() / 2 << " events" << endl;
@@ -101,17 +93,25 @@ void ofApp::setup() {
 //--------------------------------------------------------------
 void ofApp::update() {
     if(!FULLSCREEN)
-        ofSetWindowTitle(ofToString(ofGetFrameRate()));
+        ofSetWindowTitle(ofToString((int)ofGetFrameRate()));
 
     while(SCreceiver.hasWaitingMessages()){
         msg.clear();
         SCreceiver.getNextMessage(msg);
+        if(!bSCClientSet){
+            SCsender.setup(msg.getRemoteHost(), 6063);
+            bSCClientSet = true;
+        }
         parser->parseMsg(msg);
         receive(msg);
     }
     while(GUIreceiver.hasWaitingMessages()){
         msg.clear();
         GUIreceiver.getNextMessage(msg);
+        if(!bGUIClientSet){
+            GUIsender.setup(msg.getRemoteHost(), 6062);
+            bGUIClientSet = true;
+        }
         receive(msg);
     }
     while(spaceNavReceiver.hasWaitingMessages()){
@@ -123,15 +123,14 @@ void ofApp::update() {
     if(song)
         song->update();
     
-    if(!USE_FBO)
+    if(!bUseFbo)
         visualizer->update();
 
-    if(USE_FBO){
+    if(bUseFbo){
         f.begin();
     
         ofClear(0);
         visualizer->update();
-        visualizer->fitFadeScreen(glm::vec2(FBO_WIDTH, FBO_HEIGHT));
         visualizer->display();
         ofNoFill();
         ofSetLineWidth(10);
@@ -146,9 +145,9 @@ void ofApp::update() {
         
         f.end();
         
-        left.begin();
-            f.getTexture().drawSubsection(0, 0, 1280, 800, 0, 0);
-        left.end();
+//        left.begin();
+//            f.getTexture().drawSubsection(0, 0, 1280, 800, 0, 0);
+//        left.end();
         
 //        right.begin();
 //            f.getTexture().drawSubsection(0, 0, 1280, 800, 1280*2, 0);
@@ -172,7 +171,7 @@ void ofApp::update() {
     //        visualizer->display();
         }
     }
-    //if(USE_SERVER && USE_FBO){
+    //if(USE_SERVER && bUseFbo){
   //      syphonServerLeft.publishTexture(&left.getTexture());
 //        syphonServerRight.publishTexture(&right.getTexture());
    // }
@@ -183,7 +182,7 @@ void ofApp::update() {
 //--------------------------------------------------------------
 void ofApp::draw(){
     ofBackground(0);
-    if(USE_FBO){
+    if(bUseFbo){
         switch(fboDisplayMode){
             case 0:
                 f.getTexture().bind();
@@ -209,10 +208,12 @@ void ofApp::draw(){
 }
 
 //--------------------------------------------------------------
-void ofApp::exit() {
-    
+void ofApp::exit() {}
+//--------------------------------------------------------------
+void ofApp::windowResized(int w, int h){
+    if(visualizer)
+        visualizer->fitFadeScreen(glm::vec2(w, h));
 }
-
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
 	switch(key) {
@@ -245,6 +246,7 @@ void ofApp::keyPressed(int key) {
             break;
         case 'f':{
             mesh.clearVertices();
+            vector<ofVec3f> meshVertices(4);
             meshVertices[0] = ofVec3f(0,0);
             meshVertices[1] = ofVec3f(ofGetScreenWidth(), 0);
             meshVertices[2] = ofVec3f(ofGetScreenWidth(), ofGetScreenHeight());
@@ -266,7 +268,7 @@ void ofApp::keyPressed(int key) {
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
     if(bEditMode){
-        char indexOfClosest = 0;
+        unsigned char indexOfClosest = 0;
         float minDistance = 99999999;
         for(char i=0; i<4; i++){
             if(ofVec2f(x, y).distance(meshVertices[i]) < minDistance){
@@ -275,7 +277,7 @@ void ofApp::mousePressed(int x, int y, int button){
             }
         }
         cout << "Selected: " << (int)indexOfClosest << endl;
-        meshVertices[indexOfClosest] = ofVec2f(x, y);
+        meshVertices[indexOfClosest] = glm::vec3(x, y, 0);
         mesh.clear();
         mesh.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
         

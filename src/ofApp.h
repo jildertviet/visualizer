@@ -32,8 +32,14 @@
 #include "MsgParser.hpp"
 
 class ofApp : public ofBaseApp {
-
 	public:
+    // Settings
+    vector<string> arguments;
+    glm::vec2 size = glm::vec2(1280, 800);
+    float frameRate = 60;
+    bool bUseFbo = false;
+    
+    
     void setup();
     void update();
     void draw();
@@ -41,6 +47,7 @@ class ofApp : public ofBaseApp {
     
     void keyPressed(int key);
     void mousePressed(int x, int y, int button);
+    void windowResized(int w, int h);
 
     Visualizer* visualizer = nullptr;
     ofxOscReceiver GUIreceiver;
@@ -49,10 +56,12 @@ class ofApp : public ofBaseApp {
     ofxOscSender GUIsender;
     ofxOscSender SCsender;
     ofxOscMessage msg;
+    bool bSCClientSet = false;
+    bool bGUIClientSet = false;
     
+    vector<glm::vec3> meshVertices;
+    vector<glm::vec2> texCoords;
     ofMesh mesh;
-    ofVec2f texCoords[4] = {ofVec2f(0,0), ofVec2f(1280, 0), ofVec2f(1280, 800), ofVec2f(0, 800)};
-    ofVec3f meshVertices[4] = {ofVec3f(0, 0, 0), ofVec3f(1280, 0, 0), ofVec3f(1280, 800, 0), ofVec3f(0, 800, 0)};
     bool bEditMode = false;
     char fboDisplayMode = 0;
     bool bSaveFbo = false;
