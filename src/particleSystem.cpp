@@ -51,12 +51,14 @@ void particleSystem::init(int numParticles){
     glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(float4) * numParticles, 0, GL_DYNAMIC_COPY_ARB);
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
     
+    
 //    particleCos.initBuffer(numParticles);
     
     // init host and CL buffers
     particles.initBuffer(numParticles);
     particlePos.initFromGLObject(vbo, numParticles);
     particleCos.initFromGLObject(cbo, numParticles);
+    
     
 //    clImage.initWithTexture(10, 10, GL_RGBA);
 //    clImage.getTexture().setTextureMinMagFilter(GL_LINEAR, GL_LINEAR); // Remove this later
@@ -85,13 +87,16 @@ void particleSystem::init(int numParticles){
     particlePos.writeToDevice(); ///< uploads buffer data to shared CL/GL memory, so the vbo and the cl buffer are written in one go, since they occupy the same memory locations.
     particleCos.writeToDevice();
     
+    
     opencl.loadProgramFromFile("MSAOpenCL/Particle.cl");
     opencl.loadKernel("updateParticle");
+    
+    
 
     opencl.kernel("updateParticle")->setArg(0, particles);
     opencl.kernel("updateParticle")->setArg(1, particlePos);
     opencl.kernel("updateParticle")->setArg(2, dimensions);
-    opencl.kernel("updateParticle")->setArg(3, clImage);
+//    opencl.kernel("updateParticle")->setArg(3, clImage); // Only set it when the clImage is allocated (by setVecField function)
     opencl.kernel("updateParticle")->setArg(4, particleCos);
     opencl.kernel("updateParticle")->setArg(5, globalForce);
     opencl.kernel("updateParticle")->setArg(6, forceMultiplier);
@@ -131,12 +136,12 @@ void particleSystem::specificFunction(){
             }
         }
         clImage.write(pixels, true);
-        opencl.kernel("updateParticle")->setArg(3, clImage);
     } else{
-        return; // Test: only work with vecField
+        return; // Test: only work with vecField for now
     }
     
     opencl.kernel("updateParticle")->setArg(2, dimensions);
+    opencl.kernel("updateParticle")->setArg(3, clImage);
     opencl.kernel("updateParticle")->setArg(5, globalForce);
     opencl.kernel("updateParticle")->setArg(6, forceMultiplier);
     opencl.kernel("updateParticle")->setArg(7, traagheid);
