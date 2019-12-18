@@ -23,8 +23,8 @@ __kernel void updateParticle(
     int id = get_global_id(0);
     __global particleSystemParticle *p = &particles[id];
     
-    if(colors[id][3] < destAlpha){
-        colors[id][3] = colors[id][3] + (fadeIncrease);
+    if(colors[id].w < destAlpha){
+        colors[id].w = colors[id].w + (fadeIncrease);
     }
     
     float2 positionOnTexture = posBuffer[id] / dimensions; // Dimensions of the particleSystem-space (1280*800)
@@ -39,7 +39,7 @@ __kernel void updateParticle(
     float2 normCoor = convert_float2(coor) / (float2)( get_image_width(vecField), get_image_height(vecField) );
     float4 force = read_imagef(vecField, smp, normCoor); // 0 - 1
     
-    if(force[3] != 0){
+    if(force.w != 0){
         force.x -= 0.5; // Convert force to - and + range
         force.y -= 0.5;
     
@@ -62,9 +62,9 @@ __kernel void updateParticle(
     posBuffer[id].y += (p->vel.y / 10000.);
     
     if(posBuffer[id].x >= dimensions.x || posBuffer[id].x <= 0){
-        posBuffer[id] = p->spawnPos; colors[id][3] = 0;
+        posBuffer[id] = p->spawnPos; colors[id].w = 0;
     }
     if(posBuffer[id].y >= dimensions.y || posBuffer[id].y <= 0){
-        posBuffer[id] = p->spawnPos; colors[id][3] = 0;
+        posBuffer[id] = p->spawnPos; colors[id].w = 0;
     }
 }
