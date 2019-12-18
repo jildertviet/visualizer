@@ -9,7 +9,7 @@
 #include "Laura.hpp"
 
 Laura::Laura(Visualizer* v){
-    ofSetFrameRate(30);
+//    ofSetFrameRate(30);
     this->v = v;
     v->bAddMirror = true;
 #if USE_PP

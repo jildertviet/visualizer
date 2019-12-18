@@ -106,8 +106,10 @@ void particleSystem::setVecField(JVecField* vF){
     cout << vF->density << endl;
     pixels = new unsigned char[(int)vF->density.x*(int)vF->density.y*4];
 //    clImage.reset();
-    clImage.initWithTexture(vF->density.x, vF->density.y, GL_RGBA);
-    clImage.getTexture().setTextureMinMagFilter(GL_LINEAR, GL_LINEAR); // Remove this later
+    cout << "initWithTexture" << endl;
+    clImage.initWithTexture(vF->density.x, vF->density.y, 0x1908); // GL_RGBA
+    cout << "setTextureMinMagFilter" << endl;
+    clImage.getTexture().setTextureMinMagFilter(0x2601, 0x2601); // Remove this later : GL_LINEAR
 };
 
 
@@ -129,10 +131,12 @@ void particleSystem::specificFunction(){
             }
         }
         clImage.write(pixels, true);
+        opencl.kernel("updateParticle")->setArg(3, clImage);
+    } else{
+        return; // Test: only work with vecField
     }
     
     opencl.kernel("updateParticle")->setArg(2, dimensions);
-    opencl.kernel("updateParticle")->setArg(3, clImage);
     opencl.kernel("updateParticle")->setArg(5, globalForce);
     opencl.kernel("updateParticle")->setArg(6, forceMultiplier);
     opencl.kernel("updateParticle")->setArg(7, traagheid);
