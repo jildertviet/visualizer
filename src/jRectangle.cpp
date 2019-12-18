@@ -37,6 +37,31 @@ void jRectangle::ownDtor(){
     removeFromVector();
 }
 
+void jRectangle::setAlpha(unsigned char alpha){
+    if(m){
+        for(char i=0; i<m->getNumColors(); i++){
+            ofColor c = m->getColor(i);
+            c.a = alpha;
+            m->setColor(i, c);
+        }
+    }
+}
+
+void jRectangle::setQuadColor(ofColor a, ofColor b, ofColor c, ofColor d){
+    if(m)
+        delete m;
+    m = new ofMesh();
+    m->setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+    m->addVertex(loc);
+    m->addColor(a);
+    m->addVertex(loc + glm::vec3(size.x, 0, 0));
+    m->addColor(b);
+    m->addVertex(loc + glm::vec3(0, size.y, 0));
+    m->addColor(d); // Swapped, so color adding is clockwise
+    m->addVertex(loc + glm::vec3(size.x, size.y, 0));
+    m->addColor(c);
+}
+
 void jRectangle::display(){
     ofSetColor(colors[0]);
     if(bFill){
@@ -55,11 +80,14 @@ void jRectangle::display(){
     ofTranslate(size*0.5);
     
     if(!size.z){
-        ofDrawRectangle(0, 0, size.x, size.y);
+        if(m){
+            m->draw();
+        } else{
+            ofDrawRectangle(0, 0, size.x, size.y);
+        }
     } else{
         ofDrawBox(0, 0, 0, size.x, size.y, size.z);
     }
-    
 
     ofPopMatrix();
     
@@ -109,7 +137,6 @@ void jRectangle::addVector(vector<jRectangle*>* v){
 }
 
 void jRectangle::divide(){
-    
     ofVec2f newSize = size/2.;
     ofColor color = colors[(int)ofRandom(colors.size())];
     color.a = ofRandom(100)+100;

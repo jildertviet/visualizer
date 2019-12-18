@@ -73,7 +73,8 @@ MsgParser::MsgParser(Visualizer* v){
         "text",
         "path",
         "rotation",
-        "drawMode"
+        "drawMode",
+        "alpha"
     };
     for(short i=0; i<valueKeys.size(); i++)
         values[valueKeys[i]] = i + 1;
@@ -229,7 +230,7 @@ bool MsgParser::make(ofxOscMessage& m){
             break;
         case 8:{ // JParticles
 //            e = (Event*)new JParticles();
-            e = (Event*)new particleSystem(m.getArgAsInt(4), ofVec2f(m.getArgAsInt(5),m.getArgAsInt(6)));
+            e = (Event*)new particleSystem(m.getArgAsInt(4), ofVec2f(m.getArgAsInt(5),m.getArgAsInt(6)), ofColor::white, m.getArgAsInt(7));
 //            int idToFind = m.getArgAsInt(5);
 //            ((particleSystem*)e)->setVecField((JVecField*)v->getEventById(m.getArgAsInt(5)));
         }
@@ -391,6 +392,9 @@ void MsgParser::setVal(ofxOscMessage& m){ // Default: /setVal, 0, "size", 100, 2
                 if(e->type == "JVecField")
                     ((JVecField*)e)->drawMode = m.getArgAsInt(2);
             }
+                break;
+            case 21:
+                e->setAlpha(m.getArgAsInt(2));
                 break;
         }
     } else{

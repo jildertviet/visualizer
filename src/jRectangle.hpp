@@ -46,6 +46,9 @@ public:
     vector<jRectangle*> children;
     int numChildren = 0;
     jRectangle* getChild();
+    ofMesh* m = nullptr;
+    void setQuadColor(ofColor a, ofColor b, ofColor c, ofColor d);
+    void setAlpha(unsigned char alpha) override;
 private:
     
 };

@@ -21,7 +21,7 @@ int main(int argc, char *argv[]){
     mainSettings.setGLVersion(2, 1); // (2, 1) for ofxMSAOpenCL
     
     bool bDualWindow = false;
-    if(app->arguments.size() > 1){
+    if(app->arguments.size() >= 5){
         if(ofToInt(app->arguments[4]) == 2)
             bDualWindow = true;
     }

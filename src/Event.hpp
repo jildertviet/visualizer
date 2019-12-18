@@ -86,7 +86,7 @@ public:
     bool bCheckBordersV = true;
     void checkBorders();
     
-    void setAlpha(int alpha);
+    virtual void setAlpha(unsigned char alpha);
     virtual void setColor(ofColor color, int index=0);
     
     void makeLinkTap(string name, float* floatPtr, ofVec2f range);

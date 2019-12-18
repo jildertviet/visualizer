@@ -25,10 +25,11 @@ particleSystem::particleSystem(){
     init(numParticles);
 }
 
-particleSystem::particleSystem(int numParticles, ofVec2f size, ofFloatColor color){
+particleSystem::particleSystem(int numParticles, ofVec2f size, ofFloatColor color, int testIndex){
     this->numParticles = numParticles;
     this->color = color;
     dimensions = size;
+    customOneArguments[0] = testIndex;
     init(numParticles);
     // init particles
 }
@@ -49,6 +50,8 @@ void particleSystem::init(int numParticles){
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, cbo);
     glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(float4) * numParticles, 0, GL_DYNAMIC_COPY_ARB);
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+    
+//    particleCos.initBuffer(numParticles);
     
     // init host and CL buffers
     particles.initBuffer(numParticles);
@@ -188,14 +191,14 @@ void particleSystem::customThree(){ // Set traagheid
 void particleSystem::customFour(){ // Set alpha
     float alpha = colors[0].a / 255.;
     cout << "Set alpha: " << alpha << endl;
-    for(int i=0; i<numParticles; i++) {
+    for(unsigned int i=0; i<numParticles; i++) {
         particleSystemParticle &p = particles[i];
         particleCos[i].set(colors[0].r / 255., colors[0].g / 255., colors[0].b / 255., alpha);
         p.alpha = alpha; // Takes this as a "fade in to" value
     }
 //    particleCos.initFromGLObject(cbo, numParticles);
     opencl.kernel("updateParticle")->setArg(4, particleCos);
-    particleCos.writeToDevice();
+    particleCos.writeToDevice(0, numParticles);
     destAlpha = alpha;
 }
 

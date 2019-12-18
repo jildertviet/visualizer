@@ -233,7 +233,7 @@ void Event::addPtr(Event** p){
     toClear.push_back(p);
 }
 
-void Event::setAlpha(int alpha){
+void Event::setAlpha(unsigned char alpha){
     colors[0].a = alpha;
 }
 

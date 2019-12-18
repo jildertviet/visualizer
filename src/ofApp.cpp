@@ -87,6 +87,13 @@ void ofApp::setup() {
 //    e = new JShaderTest(ofVec2f(2560, 800));
 //    e->loc = ofVec2f(100, 0);
 //    visualizer->addEvent((Event*)e);
+    
+//    for(char i=0; i<12; i++){
+//        Event* r = visualizer->addEvent((Event*)new jRectangle(ofVec3f(0, 0, 0), ofVec3f(100, ofGetHeight(), 0)), NON_CAM_FRONT);
+//        ((jRectangle*)r)->setQuadColor(ofColor(255), ofColor::red, ofColor::green, ofColor::blue);
+//        r->speed = ofRandom(10.);
+//        r->setAlpha(ofRandom(10, 255));
+//    }
 }
 
 
