@@ -219,8 +219,13 @@ void ofApp::draw(){
 void ofApp::exit() {}
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-    if(visualizer)
-        visualizer->fitFadeScreen(glm::vec2(w, h));
+    if(visualizer){
+        if(bUseFbo){
+            visualizer->fitFadeScreen(glm::vec2(visualizer->fbo.getWidth(), visualizer->fbo.getHeight()));
+        } else{
+            visualizer->fitFadeScreen(glm::vec2(w, h));
+        }
+    }
 }
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
