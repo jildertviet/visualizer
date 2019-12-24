@@ -31,6 +31,8 @@ particleSystem::particleSystem(int numParticles, ofVec2f size, ofFloatColor colo
     dimensions = size;
     customOneArguments[0] = testIndex;
     init(numParticles);
+    clImage.initWithTexture(128, 80, GL_RGBA);
+    clImage.getTexture().setTextureMinMagFilter(GL_LINEAR, GL_LINEAR); // Remove this later :
     // init particles
 }
 
@@ -108,13 +110,17 @@ void particleSystem::init(int numParticles){
 
 void particleSystem::setVecField(JVecField* vF){
     vecField = vF;
+    
+    
     cout << vF->density << endl;
     pixels = new unsigned char[(int)vF->density.x*(int)vF->density.y*4];
+    return;
 //    clImage.reset();
     cout << "initWithTexture" << endl;
-    clImage.initWithTexture(vF->density.x, vF->density.y, 0x1908); // GL_RGBA
+//    clImage.initWithTexture(vF->texture); // GL_RGBA
+    clImage.initFromTexture(vF->vecTex);
     cout << "setTextureMinMagFilter" << endl;
-    clImage.getTexture().setTextureMinMagFilter(0x2601, 0x2601); // Remove this later : GL_LINEAR
+    clImage.getTexture().setTextureMinMagFilter(GL_LINEAR, GL_LINEAR); // Remove this later :
 };
 
 
@@ -135,6 +141,7 @@ void particleSystem::specificFunction(){
                 pixelIndex++;
             }
         }
+//        cout << "Before writing to the CL image" << endl;
         clImage.write(pixels, true);
     } else{
         return; // Test: only work with vecField for now
@@ -150,7 +157,9 @@ void particleSystem::specificFunction(){
     
     glFlush();
     
+//    cout << "Before run1D" << endl;
     opencl.kernel("updateParticle")->run1D(numParticles);
+//    opencl.flush();
 }
 
 void particleSystem::display(){

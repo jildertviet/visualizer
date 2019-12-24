@@ -74,7 +74,8 @@ MsgParser::MsgParser(Visualizer* v){
         "path",
         "rotation",
         "drawMode",
-        "alpha"
+        "alpha",
+        "quadColor"
     };
     for(short i=0; i<valueKeys.size(); i++)
         values[valueKeys[i]] = i + 1;
@@ -252,7 +253,9 @@ bool MsgParser::make(ofxOscMessage& m){
             e = new JVideoPlayer();
             break;
         case 14:{
-            e = new JShaderTest(ofVec2f(m.getArgAsFloat(3), m.getArgAsFloat(4)));
+            glm::vec2 size = glm::vec2(m.getArgAsFloat(3), m.getArgAsFloat(4));
+            cout << "Size: " << size << endl;
+            e = new JShaderTest(size);
 //            ((JShaderTest*)e)->mask = &(v->sharedFbo);
 //            ((JShaderTest*)e)->src = &(v->sharedFbo2);
         }
@@ -396,6 +399,19 @@ void MsgParser::setVal(ofxOscMessage& m){ // Default: /setVal, 0, "size", 100, 2
             case 21:
                 e->setAlpha(m.getArgAsInt(2));
                 break;
+            case 22:
+                if(e->type == "jRectangle"){
+                    cout << "setQuadColor" << endl;
+                    ofColor a = ofColor(m.getArgAsInt(2), m.getArgAsInt(3), m.getArgAsInt(4));
+                    cout << "a: " << a << endl;
+                    ((jRectangle*)e)->setQuadColor(
+                                    a,
+                                    ofColor(m.getArgAsInt(5), m.getArgAsInt(6), m.getArgAsInt(7)),
+                                    ofColor(m.getArgAsInt(8), m.getArgAsInt(9), m.getArgAsInt(10)),
+                                    ofColor(m.getArgAsInt(11), m.getArgAsInt(12), m.getArgAsInt(13))
+                                                   );
+                    ((jRectangle*)e)->setAlpha(m.getArgAsInt(14));
+                }
         }
     } else{
         cout << "Event not found, id: " << m.getArgAsInt(0) << endl;
