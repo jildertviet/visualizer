@@ -46,7 +46,7 @@ void ofApp::setup() {
 //    ofEnableSmoothing(); // CAUSES FRAMERATE DROPS
     ofEnableAlphaBlending();
     
-    visualizer = new Visualizer(size);
+    visualizer = new Visualizer(glm::vec2(size.x*2, size.y));
     visualizer->fitFadeScreen(size); // Also on window-resize!?
     parser = new MsgParser(visualizer);
     
