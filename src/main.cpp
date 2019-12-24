@@ -3,6 +3,7 @@
 #include "ofAppGLFWWindow.h"
 #include "JFboWindow.hpp"
 
+// ./visualizer width height framerate numWindows
 int main(int argc, char *argv[]){
     shared_ptr<ofApp> app(new ofApp()); // Arguments stuff (for passing ip and UDP-port)
     app->arguments = vector<string>(argv, argv + argc);
@@ -43,6 +44,7 @@ int main(int argc, char *argv[]){
         secondWindowSettings.shareContextWith = mainWindow;
         shared_ptr<ofAppBaseWindow> secondWindow = ofCreateWindow(secondWindowSettings);
         fboWindow->fbo = &(app->f);
+        fboWindow->frameRate = ofToFloat(app->arguments[3]);
         ofRunApp(secondWindow, fboWindow);
     } else{
         cout << "Single window" << endl;

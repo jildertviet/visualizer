@@ -2,7 +2,7 @@
 
 #include "Visualizer.hpp"
 
-Visualizer::Visualizer(){
+Visualizer::Visualizer(glm::vec2 size){
     for(unsigned short i=0; i<MAX_EVENTS_PTRS; i++)
         events[i] = nullptr;
     for(int i=0; i<NUMLAYERS; i++)
@@ -48,7 +48,7 @@ Visualizer::Visualizer(){
     
     cout << "Visualizer made" << endl;
 //    fbo.allocate(ofGetWidth(), ofGetHeight(), GL_RGBA);
-    fbo.allocate(2560, 800, GL_RGBA);
+    fbo.allocate(size.x, size.y, GL_RGBA);
 //    sharedFbo.allocate(2560, 800, GL_RGBA);
 //    sharedFbo2.allocate(2560, 800, GL_RGBA);
 }

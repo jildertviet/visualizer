@@ -44,7 +44,7 @@ class Bus;
 class Visualizer{
 public:
 typedef unsigned char uint8;
-    Visualizer();
+    Visualizer(glm::vec2 size);
     ~Visualizer();
     ofFbo fbo;
     void deconstructor();
