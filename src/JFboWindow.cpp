@@ -13,7 +13,8 @@ JFboWindow::JFboWindow(){
 }
 
 void JFboWindow::setup(){
-    ofSetFrameRate(frameRate);
+//    ofSetFrameRate(frameRate);
+    ofSetVerticalSync(false);
 }
 
 void JFboWindow::update(){
