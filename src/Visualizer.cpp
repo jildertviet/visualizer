@@ -59,7 +59,7 @@ void Visualizer::initCam(){
     cam.reset();
     cam.lookAt(ofVec3f(0,0,0));
     cam.rotate(-180, ofVec3f(0,1,0));
-    cam.setDistance(fbo.getWidth() * 0.5);
+    cam.setDistance(fbo.getWidth() * 0.25);
 //    cam.move(ofGetWidth() * 0.5, ofGetHeight() * 0.5, 0);
     cam.move(fbo.getWidth() * 0.5, fbo.getHeight() * 0.5, 0); // Temp for ADEtje
     
