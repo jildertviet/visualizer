@@ -18,6 +18,7 @@ public:
     void update();
     void draw();
     ofFbo* fbo;
+    float frameRate = 60;
 //    void exit();
     
 //    void keyPressed(int key);
