@@ -73,7 +73,8 @@ void ofApp::setup() {
 //    vecField->mode = VECFIELD_MODE::UNDERLAYING;
 //    vecField->complexity = 50;
 //    vecField->setColor(ofColor(0, 0, 0, 0)); // Transparant
-
+//    vecField->underlayer = &visualizer->fbo;
+//
 //    ps->setVecField(vecField);
     
 //    JVideoPlayer* v = new JVideoPlayer();
