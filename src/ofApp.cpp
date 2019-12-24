@@ -46,8 +46,13 @@ void ofApp::setup() {
 //    ofEnableSmoothing(); // CAUSES FRAMERATE DROPS
     ofEnableAlphaBlending();
     
-    visualizer = new Visualizer(glm::vec2(size.x*2, size.y));
-    visualizer->fitFadeScreen(size); // Also on window-resize!?
+    if(bUseFbo){
+        visualizer = new Visualizer(glm::vec2(size.x*2, size.y));
+        visualizer->fitFadeScreen(glm::vec2(size.x*2, size.y)); // Also on window-resize!?
+    } else{
+        visualizer = new Visualizer(size);
+        visualizer->fitFadeScreen(size); // Also on window-resize!?
+    }
     parser = new MsgParser(visualizer);
     
     GUIreceiver.setup(6060);
