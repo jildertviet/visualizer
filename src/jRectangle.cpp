@@ -72,13 +72,13 @@ void jRectangle::display(){
     
     ofPushMatrix();
     
-    ofTranslate(loc);
-    ofTranslate(-size*0.5);
-    ofRotateZDeg(rotation.z);
-    
-//    ofTranslate(-loc);
-    ofTranslate(size*0.5);
-    
+    if(!m){
+        ofTranslate(loc);
+        ofTranslate(-size*0.5);
+        ofRotateZDeg(rotation.z);
+        ofTranslate(size*0.5);
+    }
+        
     if(!size.z){
         if(m){
             m->draw();
