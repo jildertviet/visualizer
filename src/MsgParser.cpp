@@ -252,7 +252,7 @@ bool MsgParser::make(ofxOscMessage& m){
             e = new JVideoPlayer();
             break;
         case 14:{
-            e = new JShaderTest(ofVec2f(2560, 800));
+            e = new JShaderTest(ofVec2f(m.getArgAsFloat(3), m.getArgAsFloat(4)));
 //            ((JShaderTest*)e)->mask = &(v->sharedFbo);
 //            ((JShaderTest*)e)->src = &(v->sharedFbo2);
         }
