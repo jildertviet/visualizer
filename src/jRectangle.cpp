@@ -95,6 +95,11 @@ void jRectangle::display(){
 }
 
 void jRectangle::specificFunction(){
+    if(getNumEnv()){
+        if(m){
+            setAlpha(colors[0].a); // Transfer colors[0] alpha to mesh alpha
+        }
+    }
     move();
     imageFloating(); // virtual
 }
