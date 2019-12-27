@@ -3,18 +3,26 @@
 #include "ofAppGLFWWindow.h"
 #include "JFboWindow.hpp"
 
-// ./visualizer width height framerate numWindows
+// ./visualizer width height framerate numWindows fullscreen order
+// ./visualizer 3840 1080 30 2 f 0 1
 int main(int argc, char *argv[]){
     shared_ptr<ofApp> app(new ofApp()); // Arguments stuff (for passing ip and UDP-port)
     app->arguments = vector<string>(argv, argv + argc);
     for(int i=0; i<app->arguments.size(); i++)
         cout << "arg[" << i << "]: " << app->arguments[i] << endl;
-
     
-    if(app->arguments.size() > 1){
+    if(app->arguments[1] == "-h"){
+        cout << "Run like: " << endl;
+        cout << "\tvisualizer width height framerate numWindows fullscreen order order" << endl;
+        cout << "\tvisualizer 3840 1080 30 2 f 0 1" << endl;
+        cout << "order is not used yet" << endl;
+        exit(0);
+    }
+    if(app->arguments.size() >= 6){
         if(app->arguments[2] != "YES"){ // arguments[2] is YES when ran from XCode
             app->size = glm::vec2(ofToInt(app->arguments[1]), ofToInt(app->arguments[2]));
             app->frameRate = ofToFloat(app->arguments[3]);
+            app->bFullScreen = ofToBool(app->arguments[5]);
         } // else: default size is set in ofApp.h
     }
     
@@ -32,10 +40,14 @@ int main(int argc, char *argv[]){
         shared_ptr<JFboWindow> fboWindow(new JFboWindow());
         ofGLFWWindowSettings secondWindowSettings;
         secondWindowSettings.setGLVersion(2, 1);
+        secondWindowSettings.monitor = 1;
 
         app->size.x *= 0.5;
         app->bUseFbo = true;
+        
         mainSettings.setSize(app->size.x, app->size.y);
+        mainSettings.monitor = 0;
+        mainSettings.multiMonitorFullScreen = true;
         shared_ptr<ofAppBaseWindow> mainWindow = ofCreateWindow(mainSettings);
         ofRunApp(mainWindow, app);
         
@@ -45,6 +57,7 @@ int main(int argc, char *argv[]){
         shared_ptr<ofAppBaseWindow> secondWindow = ofCreateWindow(secondWindowSettings);
         fboWindow->fbo = &(app->f);
         fboWindow->frameRate = ofToFloat(app->arguments[3]);
+        fboWindow->bFullScreen = ofToBool(app->arguments[5]);
         ofRunApp(secondWindow, fboWindow);
     } else{
         cout << "Single window" << endl;

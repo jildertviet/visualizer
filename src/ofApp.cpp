@@ -1,7 +1,5 @@
 #include "ofApp.h"
 
-#define FULLSCREEN  false
-
 #define FBO_STRETCH_SCREEN  false
 #define USE_SERVER  true
 #define FBO_DRAW_MIDDLE_ONLY true
@@ -32,11 +30,11 @@ void ofApp::setup() {
 //        size.x *= 2; // TEST
     }
 
-    if(!FULLSCREEN)
+    if(!bFullScreen)
         ofSetWindowShape(size.x, size.y); // TEST
 
     ofSetCircleResolution(360);
-    ofSetFullscreen(FULLSCREEN);
+    ofSetFullscreen(bFullScreen);
     ofBackground(0);
 //    ofHideCursor();
     
@@ -49,9 +47,11 @@ void ofApp::setup() {
     if(bUseFbo){
         visualizer = new Visualizer(glm::vec2(size.x*2, size.y));
         visualizer->fitFadeScreen(glm::vec2(size.x*2, size.y)); // Also on window-resize!?
+        visualizer->initCircularMaskFbo(glm::vec2(size.x*2, size.y), 2);
     } else{
         visualizer = new Visualizer(size);
         visualizer->fitFadeScreen(size); // Also on window-resize!?
+        visualizer->initCircularMaskFbo(size, 1);
     }
     parser = new MsgParser(visualizer);
     
@@ -105,7 +105,7 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::update() {
-    if(!FULLSCREEN)
+    if(!bFullScreen)
         ofSetWindowTitle(ofToString((int)ofGetFrameRate()));
 
     while(SCreceiver.hasWaitingMessages()){
@@ -263,14 +263,16 @@ void ofApp::keyPressed(int key) {
             bEditMode = !bEditMode;
             break;
         case 'f':{
-            mesh.clearVertices();
-            vector<ofVec3f> meshVertices(4);
-            meshVertices[0] = ofVec3f(0,0);
-            meshVertices[1] = ofVec3f(ofGetScreenWidth(), 0);
-            meshVertices[2] = ofVec3f(ofGetScreenWidth(), ofGetScreenHeight());
-            meshVertices[3] = ofVec3f(0, ofGetScreenHeight());
-            for(char i=0; i<4; i++)
-                mesh.addVertex(meshVertices[i]);
+//            mesh.clearVertices();
+//            vector<ofVec3f> meshVertices(4);
+//            meshVertices[0] = ofVec3f(0,0);
+//            meshVertices[1] = ofVec3f(ofGetScreenWidth(), 0);
+//            meshVertices[2] = ofVec3f(ofGetScreenWidth(), ofGetScreenHeight());
+//            meshVertices[3] = ofVec3f(0, ofGetScreenHeight());
+//            for(char i=0; i<4; i++)
+//                mesh.addVertex(meshVertices[i]);
+            bFullScreen = !bFullScreen;
+            ofSetFullscreen(bFullScreen);
         }
             break;
 	}

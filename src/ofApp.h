@@ -38,7 +38,7 @@ class ofApp : public ofBaseApp {
     glm::vec2 size = glm::vec2(1280, 800);
     float frameRate = 60;
     bool bUseFbo = false;
-    
+    bool bFullScreen = true;
     
     void setup();
     void update();

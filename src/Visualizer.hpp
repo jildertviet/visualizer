@@ -125,6 +125,9 @@ typedef unsigned char uint8;
     ofTrueTypeFont verdana30;
     cameraController* camController;
 //    ofFbo sharedFbo, sharedFbo2;
+    ofFbo circularMask;
+    bool bDrawCirclularMask = true;
+    void initCircularMaskFbo(glm::vec2 size, int num=1);
 private:
     void loadLastMaskFile();
     vector<Event*> layers; // linked list, use AddEvent to add

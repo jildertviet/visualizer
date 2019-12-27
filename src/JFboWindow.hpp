@@ -19,6 +19,9 @@ public:
     void draw();
     ofFbo* fbo;
     float frameRate = 60;
+    bool bFullScreen = true;
+    void keyPressed(int key);
+
 //    void exit();
     
 //    void keyPressed(int key);

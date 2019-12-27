@@ -146,6 +146,10 @@ void Visualizer::display(){
 #endif
     
     layers[NUMLAYERS-2]->displayMain(); // Non-cam layer
+    if(bDrawCirclularMask){
+        ofSetColor(255);
+        circularMask.draw(0, 0);
+    }
     fade->displayMain();
 }
 
@@ -426,4 +430,25 @@ void Visualizer::getFreePointers(){
     // So should have a 'blank list', of all ptrs[x] that are free...
     // @ Reset receive a bunch of numbers that are free, use that for setting new addresses @ SC...
     
+}
+
+void Visualizer::initCircularMaskFbo(glm::vec2 size, int num){
+    cout << "create circle mask w/ size: " << size << endl;
+    // create one circle first
+    circularMask.allocate(size.x, size.y, GL_RGBA);
+    ofPixels p;
+    p.allocate(size.x, size.y, OF_PIXELS_RGBA);
+    float yRatio, xRatio;
+    for(int i=0; i<p.getWidth(); i++){
+        xRatio = (float)i / p.getWidth();
+        xRatio = pow((1-abs(sin(xRatio*(num*PI)))), 0.5);
+        for(int j=0; j<p.getHeight(); j++){
+            yRatio = float(j) / p.getHeight();
+            yRatio = pow((1-sin(yRatio*(PI))), 0.5);
+            float toWrite = (yRatio + xRatio) * 0.5;
+            ofColor c = ofColor(0, 255 * toWrite); // Half phase of sine
+            p.setColor(i, j, c);
+        }
+    }
+    circularMask.getTexture().loadData(p);
 }
