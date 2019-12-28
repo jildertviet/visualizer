@@ -69,8 +69,10 @@ void Visualizer::initCam(){
 //    cam.move(0, ofGetHeight() * -0.5, 0);
     cam.move(fbo.getWidth() * 0.5, fbo.getHeight() * 0.5, 0); // Temp for ADEtje
     
-    camController = new cameraController(&cam);
-    addEvent((Event*)camController, 0);
+    if(!camController){
+        camController = new cameraController(&cam);
+        addEvent((Event*)camController, 0);
+    }
 }
 
 Visualizer::~Visualizer(){
