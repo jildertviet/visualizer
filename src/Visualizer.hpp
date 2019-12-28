@@ -4,7 +4,7 @@
 #define Visualizer_hpp
 
 #define NUMLAYERS   7
-#define MAX_EVENTS_PTRS 512
+#define MAX_EVENTS_PTRS 1025
 #define USE_PP  false // ofxPostProcessing
 
 #include <stdio.h>

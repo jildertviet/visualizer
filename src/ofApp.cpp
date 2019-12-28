@@ -30,11 +30,11 @@ void ofApp::setup() {
 //        size.x *= 2; // TEST
     }
 
-    if(!bFullScreen)
-        ofSetWindowShape(size.x, size.y); // TEST
+//    if(!bFullScreen)
+//        ofSetWindowShape(size.x, size.y); // TEST
 
     ofSetCircleResolution(360);
-    ofSetFullscreen(bFullScreen);
+//    ofSetFullscreen(bFullScreen);
     ofBackground(0);
 //    ofHideCursor();
     
@@ -51,7 +51,7 @@ void ofApp::setup() {
     } else{
         visualizer = new Visualizer(size);
         visualizer->fitFadeScreen(size); // Also on window-resize!?
-        visualizer->initCircularMaskFbo(size, 1);
+        visualizer->initCircularMaskFbo(size, numCircles);
     }
     parser = new MsgParser(visualizer);
     
@@ -61,12 +61,6 @@ void ofApp::setup() {
     visualizer->receiver.setup(4040);
     parser->SCsender = &SCsender;
     visualizer->SCsender = &SCsender;
-    
-    ofxOscMessage m = visualizer->getAllEvents();
-    cout << m.getNumArgs() / 2 << " events" << endl;
-    
-//    loadSong("CounterParts");
-//    visualizer->addEvent((Event*)new JVecField());
 
 //    particleSystem* ps = (particleSystem*)visualizer->addEvent(new particleSystem(2000000), NON_CAM_FRONT);
 //
@@ -85,21 +79,12 @@ void ofApp::setup() {
 //    JVideoPlayer* v = new JVideoPlayer();
 //    v->load("video/mc4.mp4");
 //    visualizer->addEvent((Event*)v, NON_CAM_BACK);
-    
-//    IFLogo* e = new IFLogo(ofVec2f(1280 - 200, 200), ofVec2f(400, 400));
-    
+
 //    JShaderTest* e = new JShaderTest(ofVec2f(2560, 800));
 //    visualizer->addEvent((Event*)e);
 //    e = new JShaderTest(ofVec2f(2560, 800));
 //    e->loc = ofVec2f(100, 0);
 //    visualizer->addEvent((Event*)e);
-    
-//    for(char i=0; i<12; i++){
-//        Event* r = visualizer->addEvent((Event*)new jRectangle(ofVec3f(0, 0, 0), ofVec3f(100, ofGetHeight(), 0)), NON_CAM_FRONT);
-//        ((jRectangle*)r)->setQuadColor(ofColor(255), ofColor::red, ofColor::green, ofColor::blue);
-//        r->speed = ofRandom(10.);
-//        r->setAlpha(ofRandom(10, 255));
-//    }
 }
 
 
@@ -179,15 +164,9 @@ void ofApp::update() {
     //        ofSaveScreen("a.png");
             bSaveFbo = false;
         } else{
-    //        ofClear(0);
-    //        ofEnableSmoothing();
-    //        visualizer->display();
+
         }
     }
-    //if(USE_SERVER && bUseFbo){
-  //      syphonServerLeft.publishTexture(&left.getTexture());
-//        syphonServerRight.publishTexture(&right.getTexture());
-   // }
 }
 
 
@@ -370,11 +349,11 @@ void ofApp::loadSong(string name){
     } else if(name == "model"){
         song = new model(visualizer);
     }
-    ofSetWindowShape(ofGetWidth(), ofGetHeight());
+//    ofSetWindowShape(ofGetWidth(), ofGetHeight());
 }
 
 void ofApp::receive(ofxOscMessage m){
-    cout << "r" << endl;
+//    cout << "r" << endl;
     string a = m.getAddress();
     if(a == "/DeviceNote" || a == "/GUI"){
         if(song)

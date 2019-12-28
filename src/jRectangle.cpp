@@ -64,6 +64,7 @@ void jRectangle::setQuadColor(ofColor a, ofColor b, ofColor c, ofColor d){
 
 void jRectangle::display(){
     ofSetColor(colors[0]);
+    
     if(bFill){
         ofFill();
     } else{
@@ -74,6 +75,7 @@ void jRectangle::display(){
     
     if(!m){
         ofTranslate(loc);
+        ofDrawRectangle(0, 0, size.x, size.y);
         ofTranslate(-size*0.5);
         ofRotateZDeg(rotation.z);
         ofTranslate(size*0.5);

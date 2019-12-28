@@ -13,6 +13,7 @@ cameraController::cameraController(ofEasyCam* c){
 }
 
 void cameraController::specificFunction(){
+    
     ofVec3f lookAt;
     if(!focus){
         lookAt = ofVec3f(0,0,0);

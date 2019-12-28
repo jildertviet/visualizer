@@ -76,7 +76,8 @@ bool Env::process(){
                 if(!loop){
                     active = false;
                     ptr->writeValue(levels.back());
-                    saveValueToBuffer(levels.back());
+                    if(bSave)
+                        saveValueToBuffer(levels.back());
 //                    cout << "Env done" << levels[timesIndex] << endl;
                     if(bSave){
 //                      // Save the buffer to a file ... 

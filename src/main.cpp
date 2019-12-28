@@ -13,26 +13,30 @@ int main(int argc, char *argv[]){
     
     if(app->arguments[1] == "-h"){
         cout << "Run like: " << endl;
-        cout << "\tvisualizer width height framerate numWindows fullscreen order order" << endl;
-        cout << "\tvisualizer 3840 1080 30 2 f 0 1" << endl;
-        cout << "order is not used yet" << endl;
+        cout << "\tvisualizer width height framerate numOFWindows numScreens" << endl;
+        cout << "\tvisualizer 3840 1080 30 2 1 <-- Creates two OF windows" << endl;
+        cout << "\tvisualizer 3840 1080 30 1 2 <-- Creates one OF window, and has two circles for shading" << endl;
         exit(0);
     }
     if(app->arguments.size() >= 6){
         if(app->arguments[2] != "YES"){ // arguments[2] is YES when ran from XCode
             app->size = glm::vec2(ofToInt(app->arguments[1]), ofToInt(app->arguments[2]));
             app->frameRate = ofToFloat(app->arguments[3]);
-            app->bFullScreen = ofToBool(app->arguments[5]);
+//            app->bFullScreen = ofToBool(app->arguments[5]);
         } // else: default size is set in ofApp.h
     }
     
     ofGLFWWindowSettings mainSettings;
     mainSettings.setGLVersion(2, 1); // (2, 1) for ofxMSAOpenCL
+//    mainSettings.decorated = false;
+    mainSettings.windowMode = OF_FULLSCREEN;
+    mainSettings.multiMonitorFullScreen = true;
     
     bool bDualWindow = false;
     if(app->arguments.size() >= 5){
         if(ofToInt(app->arguments[4]) == 2)
             bDualWindow = true;
+        app->numCircles = ofToInt(app->arguments[5]);
     }
     
     if(bDualWindow){
@@ -47,7 +51,8 @@ int main(int argc, char *argv[]){
         
         mainSettings.setSize(app->size.x, app->size.y);
         mainSettings.monitor = 0;
-        mainSettings.multiMonitorFullScreen = true;
+//        mainSettings.multiMonitorFullScreen = true;
+
         shared_ptr<ofAppBaseWindow> mainWindow = ofCreateWindow(mainSettings);
         ofRunApp(mainWindow, app);
         

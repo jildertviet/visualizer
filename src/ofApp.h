@@ -39,6 +39,7 @@ class ofApp : public ofBaseApp {
     float frameRate = 60;
     bool bUseFbo = false;
     bool bFullScreen = true;
+    char numCircles = 1;
     
     void setup();
     void update();

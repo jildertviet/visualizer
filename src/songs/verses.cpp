@@ -32,9 +32,9 @@ void verses::rotSquares(int numRects){
         float speed;
         speed = ofMap(i, 0, numRects, 0.2, maxSpeed);
         speed = ((i/10. * 0.3 + 0.3)*0.3) * -1;
-        speed *= 0.5;
+        speed *= 0.05;
         m->addEnv(v->vec(speed, speed, speed * 0.5), v->vec(8000, 8000), &m->rotateSpeed);
-        addEvent((Event*) m);
+        addEvent((Event*) m, 3);
         rects.push_back(m);
     }
 }
@@ -44,6 +44,8 @@ void verses::F0(){ // rotSquares ||
 }
 
 void verses::F1(){ // Env @ camPos? ||
+    if(!camController)
+        return;
     // Make a camera controller-event?
     vector<float> values = {0., 1.0, 0.};
     vector<float> times = {1000, 1000};
@@ -88,7 +90,7 @@ void verses::F3(){ // Squares ||
         r->fillRatio = 0;
         r->lineWidth = 1;
         //        r->setPathWakersSpeed(1);
-        addEvent((Event*) r);
+        addEvent((Event*) r, 2);
         rects.push_back(r);
     }
 }

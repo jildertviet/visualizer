@@ -40,15 +40,18 @@ Visualizer::Visualizer(glm::vec2 size){
     
     loadLastMaskFile();
 
-    
-    
     verdana30.load("verdana.ttf", 50, true, true);
     verdana30.setLineHeight(34.0f);
     verdana30.setLetterSpacing(1.035);
     
     cout << "Visualizer made" << endl;
-//    fbo.allocate(ofGetWidth(), ofGetHeight(), GL_RGBA);
-    fbo.allocate(size.x, size.y, GL_RGBA);
+    ofFbo::Settings fs; // For export quality
+    fs.numSamples = 8;
+    fs.width = size.x;
+    fs.height = size.y;
+    fs.internalformat = GL_RGBA;
+    fs.useStencil = true;
+    fbo.allocate(fs);
     
     initCam();
 //    sharedFbo.allocate(2560, 800, GL_RGBA);
@@ -56,11 +59,14 @@ Visualizer::Visualizer(glm::vec2 size){
 }
 
 void Visualizer::initCam(){
-    cam.reset();
-    cam.lookAt(ofVec3f(0,0,0));
-    cam.rotate(-180, ofVec3f(0,1,0));
-    cam.setDistance(fbo.getWidth() * 0.25);
-//    cam.move(ofGetWidth() * 0.5, ofGetHeight() * 0.5, 0);
+//    cam.reset();
+//    cam.rotate(-180, ofVec3f(0,1,0));
+    cam.setPosition(0, 0, 0);
+    cam.rotate(-180, ofVec3f(1,0,0));
+    cam.setDistance(fbo.getWidth() * 0.5);
+//    cam.lookAt(ofVec3f(0,0,0));
+    
+//    cam.move(0, ofGetHeight() * -0.5, 0);
     cam.move(fbo.getWidth() * 0.5, fbo.getHeight() * 0.5, 0); // Temp for ADEtje
     
     camController = new cameraController(&cam);
