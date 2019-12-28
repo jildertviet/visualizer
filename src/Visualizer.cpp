@@ -63,7 +63,7 @@ void Visualizer::initCam(){
 //    cam.rotate(-180, ofVec3f(0,1,0));
     cam.setPosition(0, 0, 0);
     cam.rotate(-180, ofVec3f(1,0,0));
-    cam.setDistance(fbo.getWidth() * 0.5);
+    cam.setDistance(fbo.getWidth() * 0.25);
 //    cam.lookAt(ofVec3f(0,0,0));
     
 //    cam.move(0, ofGetHeight() * -0.5, 0);
