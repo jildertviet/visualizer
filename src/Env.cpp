@@ -12,34 +12,47 @@ Env::Env(){
     startTime = ofGetElapsedTimeMillis();
 }
 
+Env::Env(vector<float> levels, vector<float> times){
+    this->levels = levels; this->times = times; startTime = ofGetElapsedTimeMillis();
+    totalRunTime = times[0]; getDirection();
+}
+
 Env::~Env(){
     // Save the buffer
-    ofFile f;
-    if(f.doesFileExist(fileName)){
-        fileName = ofSplitString(fileName, ".txt")[0];
-        fileName += "_";
-        fileName += ofToString(*parentID);
-        fileName += ".txt";
+    if(bSave){
+        ofFile f;
+        if(f.doesFileExist(fileName)){
+            fileName = ofSplitString(fileName, ".txt")[0];
+            fileName += "_";
+            fileName += ofToString(*parentID);
+            fileName += ".txt";
+        }
+        f.create(fileName); // What if there's already a file w/ that name?
+        f.open(fileName, ofFile::Mode::WriteOnly);
+        
+        string toSave = ofToString(*parentID);
+        toSave += ",";
+        for(int i=0; i<saveBufferWritePos; i++){
+            toSave += ofToString(saveBuffer[i]);
+            if(i < saveBufferWritePos - 1)
+                toSave += ",";
+        }
+        
+        ofBuffer b;
+        b.append(toSave);
+        
+        f.writeFromBuffer(b);
+        f.close();
     }
-    f.create(fileName); // What if there's already a file w/ that name?
-    f.open(fileName, ofFile::Mode::WriteOnly);
-    
-    string toSave = ofToString(*parentID);
-    toSave += ",";
-    for(int i=0; i<saveBufferWritePos; i++){
-        toSave += ofToString(saveBuffer[i]);
-        if(i < saveBufferWritePos - 1)
-            toSave += ",";
-    }
-    
-    ofBuffer b;
-    b.append(toSave);
-    
-    f.writeFromBuffer(b);
-    f.close();
     
     if(saveBuffer)
         delete saveBuffer;
+}
+
+void Env::trigger(vector<float> levels, vector<float> times){
+    this->levels = levels; this->times = times; startTime = ofGetElapsedTimeMillis();
+    totalRunTime = times[0]; getDirection();
+    active = true; timesIndex = 0;
 }
 
 Env::Env(vector<float> levels, vector<float> times, float* f, char curve){
@@ -72,15 +85,16 @@ bool Env::process(){
         if(ofGetElapsedTimeMillis() > startTime + totalRunTime){
             timesIndex++;
             if(timesIndex >= times.size()){
-                ptr->writeValue(levels[timesIndex]);
+                value = levels[timesIndex];
+                if(ptr)
+                    ptr->writeValue(value);
                 if(!loop){
                     active = false;
-                    ptr->writeValue(levels.back());
-                    if(bSave)
-                        saveValueToBuffer(levels.back());
-//                    cout << "Env done" << levels[timesIndex] << endl;
+                    value = levels.back();
+                    if(ptr)
+                        ptr->writeValue(value);
                     if(bSave){
-//                      // Save the buffer to a file ... 
+                        saveValueToBuffer(value);
                     }
                     return false;
                 } else{
@@ -107,7 +121,10 @@ bool Env::process(){
             output = levels[timesIndex] + ofMap(ratio, 0., 1., 0., levels[timesIndex+1]-levels[timesIndex]);
         }
 
-        ptr->writeValue(output);
+        if(ptr)
+            ptr->writeValue(output);
+        value = output;
+        
         if(bSave)
             saveValueToBuffer(output);
     }

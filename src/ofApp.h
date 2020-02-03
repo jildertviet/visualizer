@@ -31,6 +31,10 @@
 #include "jTxt.hpp"
 #include "MsgParser.hpp"
 
+#ifdef __APPLE__
+    #include "ofxSyphon.h"
+#endif
+
 class ofApp : public ofBaseApp {
 	public:
     // Settings
@@ -72,7 +76,9 @@ class ofApp : public ofBaseApp {
     bool bTemp = false;
     MsgParser* parser;
     
-//    ofxSyphonServer syphonServerLeft, syphonServerRight;
+#ifdef __APPLE__
+    ofxSyphonServer syphonServer;
+#endif
     
     ofFbo left, right, f;
 private:

@@ -41,12 +41,15 @@ public:
 typedef unsigned char uint8;
     Env();
     ~Env();
+    Env(vector<float> levels, vector<float> times);
     Env(vector<float> levels, vector<float> times, float* f, char curve);
     Env(vector<float> levels, vector<float> times, int* i, char curve);
     Env(vector<float> levels, vector<float> times, ofColor* c, char curve);
     Env(vector<float> levels, vector<float> times, float* f, ofxeasing::function func);
+    void trigger(vector<float> levels, vector<float> times);
     
     uint8 id = 0;
+    float value = 0;
     
     bool bEasingSet = false;
     ofxeasing::function curveType;
@@ -56,7 +59,7 @@ typedef unsigned char uint8;
     int totalRunTime = 0;
     uint8 timesIndex = 0;
     bool process();
-    Pointer* ptr;
+    Pointer* ptr = nullptr;;
     Wavetables* wavetable;
     int startTime;
     bool active = true;

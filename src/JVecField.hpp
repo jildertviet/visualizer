@@ -50,7 +50,7 @@ public:
     bool bNormalize = true;
     glm::vec2 density = glm::vec2(40, 40);
     char mode = VECFIELD_MODE::UNDERLAYING;
-    char drawMode = VECFIELD_MODE::HIDE;
+    char drawMode = VECFIELD_MODE::TEXTURE;
     void setMode(char m) override;
     void setPixelsToTest();
     int seed = 0;

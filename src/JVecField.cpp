@@ -156,6 +156,7 @@ void JVecField::display(){
             }
                 break;
             case TEXTURE:{
+                ofSetColor(colors[0]);
                 vecTex.draw(0, 0, size.x, size.y);
             }
         }

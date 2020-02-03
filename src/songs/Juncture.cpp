@@ -93,6 +93,7 @@ void Juncture::makeSquare(int type){
                 addEvent(r);
                 squares1[numSquares1] = allSquares[numSquares] = r;
                 r->speed = ofRandom(0.5,1.0);
+                r->bMove = true;
                 ofColor c = colors[0];
                 c.a = ofRandom(155) + 100;
                 r->setColor(c);
@@ -109,6 +110,7 @@ void Juncture::makeSquare(int type){
                 addEvent(r);
                 squares2[numSquares2] = allSquares[numSquares] = r;
                 r->speed = 1.5+ofRandom(0.1);
+                 r->bMove = true;
                 ofColor c = colors[1];
                 c.a = ofRandom(155) + 100;
                 r->setColor(c);
@@ -123,6 +125,7 @@ void Juncture::makeSquare(int type){
                                );
                 addEvent(r);
                 r->speed = ofRandom(2.5,3.0);
+             r->bMove = true;
                 ofColor c = colors[2];
                 c.a = ofRandom(155) + 100;
                 r->colors[0] = c;

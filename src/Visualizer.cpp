@@ -100,9 +100,6 @@ void Visualizer::display(){
         post.begin();
 #endif
 
-    alphaScreen->displayMain();
-    layers[1]->displayMain(); // Non-cam layer
-
 //    cam.begin();
 
     if(bRotate){
@@ -134,14 +131,6 @@ void Visualizer::display(){
 
         ofPopMatrix();
     }
-//    mirror.end();
-    
-//    ofSetColor(255, 0, 0);
-//    ofDrawSphere(0, 0, 100);
-    
-//    cam.end();
-//    if(bRotate)
-//        ofPopMatrix();
     if(bMask){
         ofSetColor(255, maskBrightness);
 //        mask.draw(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
@@ -153,7 +142,6 @@ void Visualizer::display(){
         glPopAttrib();
 #endif
     
-    layers[NUMLAYERS-2]->displayMain(); // Non-cam layer
     if(bDrawCirclularMask){
         ofSetColor(255);
         circularMask.draw(0, 0);
@@ -162,43 +150,29 @@ void Visualizer::display(){
 }
 
 void Visualizer::update(){
-//    cout << cam.getPosition() << endl;
-//    while(receiver.hasWaitingMessages()){
-//        ofxOscMessage m;
-//        receiver.getNextMessage(m);
-//        cout << "Addr: " << m.getAddress() << "Value: " << m.getArgAsFloat(1) << endl;
-        
-//        if(m.getAddress()=="/controlData"){
-//            int pointerID = m.getArgAsInt(0);
-//            for(int i=0; i<receivingPointers.size(); i++){
-//                if(pointerID == receivingPointers[i]->id){
-//                    // Pass the value
-////                    cout << "Found the pointer!" << endl;
-//                    receivingPointers[i]->writeValue(m.getArgAsFloat(1));
-////                    Event* e = receivingEvents[i];
-////                    e->linkTaps[m.getArgAsInt(1)]->setValue(m.getArgAsFloat(2));
-//                }
-//            }
-//        } else{ // For addresses like "/4" etc, for audio-data
-//            for(int i=0; i<mappers.size(); i++){ // Arg[0] = 0 or 1, 0 for continous signal, Arg[1] is value of signal
-//                mappers[i]->process(m.getAddress(), m.getArgAsFloat(1));
-//            }
-//        }
-//    }
-    
-    if(bRotate){
+    if(bRotate)
         rotationAngle += rotationAngleIcrement;
-    }
     
     for(uint8 i=0; i<layers.size(); i++)
         layers[i]->updateMain();
     
+//    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA); // Found this on the OF forum
+    // Goal: two grey area's should be brighter when they overlap, currently they merge in the same greyness
+    
+    
     fbo.begin();
-        ofClear(0, 0, 0, 0);
+//        ofClear(0, 0, 0, 0);
+        ofClearAlpha();
+    
+        alphaScreen->displayMain();
+        layers[1]->displayMain(); // Non-cam layer
+
         cam.begin();
         for(uint8 i=2; i<layers.size()-2; i++) // Don't draw the last one, that's fade, happens at end
             layers[i]->displayMain();
         cam.end();
+    
+        layers[NUMLAYERS-2]->displayMain(); // Non-cam layer
     fbo.end();
 }
 

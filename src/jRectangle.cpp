@@ -28,7 +28,7 @@ jRectangle::jRectangle(float millisTime, ofVec2f loc, ofVec2f size, ofColor colo
 jRectangle::jRectangle(ofVec3f loc, ofVec3f size){
     setType("jRectangle");
     this->loc = loc; this->size = size; active=false;
-    bMove = true;
+    bMove = false;
     direction = ofVec2f(-1,0);
     speed = 1;
 }

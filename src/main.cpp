@@ -28,8 +28,7 @@ int main(int argc, char *argv[]){
     
     ofGLFWWindowSettings mainSettings;
     mainSettings.setGLVersion(2, 1); // (2, 1) for ofxMSAOpenCL
-//    mainSettings.decorated = false;
-    mainSettings.windowMode = OF_FULLSCREEN;
+    mainSettings.windowMode = OF_WINDOW;
     mainSettings.multiMonitorFullScreen = true;
     
     bool bDualWindow = false;

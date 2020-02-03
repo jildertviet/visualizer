@@ -108,7 +108,6 @@ bool MsgParser::parseMsg(ofxOscMessage& m){
             make(m);
         break;
         case 2: // setVal
-            cout << "SETVAL" << endl;
             setVal(m);
         break;
         case 3: // killAll
@@ -215,9 +214,8 @@ bool MsgParser::make(ofxOscMessage& m){
             e = new JEllipse();
             break;
         case 5: // JVorm
-//            cout << m.getArgType(3) << endl;
             if(m.getNumArgs() > 3){
-                // Specific constructor
+                // Specific constructor ?
                 e = new Vorm();
             } else{
                 e = new Vorm();

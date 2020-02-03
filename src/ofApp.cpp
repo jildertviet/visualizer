@@ -43,6 +43,7 @@ void ofApp::setup() {
     ofSetFrameRate(frameRate);
 //    ofEnableSmoothing(); // CAUSES FRAMERATE DROPS
     ofEnableAlphaBlending();
+    ofEnableDepthTest();
     
     if(bUseFbo){
         visualizer = new Visualizer(glm::vec2(size.x*2, size.y));
@@ -61,6 +62,10 @@ void ofApp::setup() {
     visualizer->receiver.setup(4040);
     parser->SCsender = &SCsender;
     visualizer->SCsender = &SCsender;
+    
+#ifdef  __APPLE__
+    syphonServer.setName("visualizer");
+#endif
 
 //    particleSystem* ps = (particleSystem*)visualizer->addEvent(new particleSystem(2000000), NON_CAM_FRONT);
 //
@@ -167,6 +172,9 @@ void ofApp::update() {
 
         }
     }
+#ifdef  __APPLE__
+    syphonServer.publishTexture(&visualizer->fbo.getTexture());
+#endif
 }
 
 
@@ -174,6 +182,7 @@ void ofApp::update() {
 //--------------------------------------------------------------
 void ofApp::draw(){
     ofBackground(0);
+//    return;
     if(bUseFbo){
         switch(fboDisplayMode){
             case 0:
