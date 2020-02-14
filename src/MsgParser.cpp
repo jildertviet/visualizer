@@ -177,10 +177,12 @@ bool MsgParser::parseMsg(ofxOscMessage& m){
             break;
         case 11:{ // linkVecField
             Event* e = v->getEventById(m.getArgAsInt(0));
+#ifndef TARGET_RASPBERRY_PI
             if(e){
                 if(e->type == "particleSystem")
                     ((particleSystem*)e)->setVecField((JVecField*)v->getEventById(m.getArgAsInt(1)));
             }
+#endif
         }
             break;
         case 12: // getFreePointers
@@ -229,7 +231,9 @@ bool MsgParser::make(ofxOscMessage& m){
             break;
         case 8:{ // JParticles
 //            e = (Event*)new JParticles();
+#ifndef TARGET_RASPBERRY_PI
             e = (Event*)new particleSystem(m.getArgAsInt(4), ofVec2f(m.getArgAsInt(5),m.getArgAsInt(6)), ofColor::white, m.getArgAsInt(7));
+#endif
 //            int idToFind = m.getArgAsInt(5);
 //            ((particleSystem*)e)->setVecField((JVecField*)v->getEventById(m.getArgAsInt(5)));
         }
