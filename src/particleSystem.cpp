@@ -5,7 +5,7 @@
 //  Created by Jildert Viet on 04-12-16.
 //
 //
-
+#ifndef TARGET_RASPBERRY_PI
 #include "particleSystem.hpp"
 
 typedef struct{
@@ -233,3 +233,5 @@ void particleSystem::setSize(ofVec3f size){
     dimensions = size;
     this->size = size;
 }
+
+#endif
