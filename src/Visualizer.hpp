@@ -10,7 +10,10 @@
 #include <stdio.h>
 #include "ofMain.h"
 #include "ofxOsc.h"
-#include "ofxPostProcessing.h"
+
+#if USE_PP
+    #include "ofxPostProcessing.h"
+#endif
 
 #include "Event.hpp"
 #include "Vorm.h"
