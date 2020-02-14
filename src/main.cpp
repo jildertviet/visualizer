@@ -27,7 +27,9 @@ int main(int argc, char *argv[]){
     }
     
     ofGLFWWindowSettings mainSettings;
+#ifndef TARGET_RASPBERRY_PI
     mainSettings.setGLVersion(2, 1); // (2, 1) for ofxMSAOpenCL
+#endif
     mainSettings.windowMode = OF_WINDOW;
     mainSettings.multiMonitorFullScreen = true;
     
@@ -42,7 +44,9 @@ int main(int argc, char *argv[]){
         cout << "Dual window" << endl;
         shared_ptr<JFboWindow> fboWindow(new JFboWindow());
         ofGLFWWindowSettings secondWindowSettings;
+#ifndef TARGET_RASPBERRY_PI
         secondWindowSettings.setGLVersion(2, 1);
+#endif
         secondWindowSettings.monitor = 1;
 
         app->size.x *= 0.5;
