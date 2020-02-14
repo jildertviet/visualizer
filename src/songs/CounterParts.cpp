@@ -6,6 +6,8 @@
 //
 //
 
+#ifndef TARGET_RASPBERRY_PI
+
 #include "CounterParts.hpp"
 
 CounterParts::CounterParts(Visualizer* v){
@@ -106,3 +108,5 @@ void CounterParts::C5(int val){ // ||
 void CounterParts::C6(int val){ // ||
     
 }
+#endif// #ifndef TARGET_RASPBERRY_PI
+

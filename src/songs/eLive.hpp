@@ -4,7 +4,7 @@
 //  Created by Jildert Viet on 20-01-17.
 //
 //
-
+#ifndef TARGET_RASPBERRY_PI
 #ifndef eLive_hpp
 #define eLive_hpp
 
@@ -40,3 +40,5 @@ public:
 };
 
 #endif /* eLive_hpp */
+#endif // #ifndef TARGET_RASPBERRY_PI
+

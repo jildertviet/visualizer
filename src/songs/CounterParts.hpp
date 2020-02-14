@@ -5,6 +5,7 @@
 //  Created by Jildert Viet on 20-01-17.
 //
 //
+#ifndef TARGET_RASPBERRY_PI
 
 #ifndef CounterParts_hpp
 #define CounterParts_hpp
@@ -33,3 +34,5 @@ private:
 };
 
 #endif /* CounterParts_hpp */
+#endif // #ifndef TARGET_RASPBERRY_PI
+

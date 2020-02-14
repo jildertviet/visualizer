@@ -5,7 +5,7 @@
 //  Created by Jildert Viet on 20-01-17.
 //
 //
-
+#ifndef TARGET_RASPBERRY_PI
 #define SPLIT   false
 
 #include "eLive.hpp"
@@ -197,3 +197,6 @@ void eLive::C6(int val){ // ||
     if(SPLIT)
         fade2->colors[0].a = ofMap(val, 127, 0, 0, 255);
 }
+
+#endif // #ifndef TARGET_RASPBERRY_PI
+
