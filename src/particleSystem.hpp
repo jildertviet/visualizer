@@ -5,6 +5,7 @@
 //  Created by Jildert Viet on 04-12-16.
 //
 //
+#ifndef TARGET_RASPBERRY_PI
 
 #ifndef particleSystem_hpp
 #define particleSystem_hpp
@@ -55,3 +56,4 @@ private:
 
 
 #endif /* particleSystem_hpp */
+#endif // TARGET_RASPBERRY_PI
