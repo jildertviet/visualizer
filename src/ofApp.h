@@ -6,6 +6,11 @@
 #include "Song.hpp"
 #include "ofxJSON.h"
 
+#ifndef TARGET_RASPBERRY_PI
+    #include "CounterParts.hpp"
+    #include "eLive.hpp"
+#endif
+
 #include "Figgie.hpp"
 #include "TimeForYou.hpp"
 #include "Faith.hpp"
@@ -15,9 +20,7 @@
 #include "JustBefore.hpp"
 #include "TeachMe.hpp"
 #include "BendStraws.hpp"
-#include "CounterParts.hpp"
 #include "Trying.hpp"
-#include "eLive.hpp"
 #include "Laura.hpp"
 #include "Start.hpp"
 #include "NewOpener.hpp"

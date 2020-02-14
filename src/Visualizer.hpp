@@ -14,13 +14,15 @@
 #if USE_PP
     #include "ofxPostProcessing.h"
 #endif
+#ifndef TARGET_RASPBERRY_PI
+    #include "particleSystem.hpp"
+#endif
 
 #include "Event.hpp"
 #include "Vorm.h"
 #include "JNoise.hpp"
 #include "JImage.hpp"
 #include "SpaceCube.h"
-#include "particleSystem.hpp"
 #include "JMirror.h"
 #include "MultiMesh.hpp"
 #include "MultiMeshMaybeTomorrow.hpp"
