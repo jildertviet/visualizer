@@ -22,7 +22,6 @@
 #include "JEllipse.h"
 #include "SpaceCube.h"
 #include "MultiMesh.hpp"
-#include "JParticles.hpp"
 #include "jTxt.hpp"
 #include "JMesh.hpp"
 #include "JImage.hpp"
