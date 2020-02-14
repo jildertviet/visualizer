@@ -336,7 +336,11 @@ void ofApp::loadSong(string name){
     } else if(name=="TeachMe"){
         song = new TeachMe(visualizer);
     } else if(name=="CounterParts"){
+#ifndef TARGET_RASPBERRY_PI
         song = new CounterParts(visualizer);
+#else
+        cout << "Counterparts song not available on RBPi" << endl;
+#endif
     } else if(name=="Trying"){
         song = new Trying(visualizer);
     } else if(name=="Laura"){
