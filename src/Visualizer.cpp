@@ -45,6 +45,7 @@ Visualizer::Visualizer(glm::vec2 size){
     verdana30.setLetterSpacing(1.035);
     
     cout << "Visualizer made" << endl;
+#ifndef TARGET_RASPBERRY_PI
     ofFbo::Settings fs; // For export quality
     fs.numSamples = 8;
     fs.width = size.x;
@@ -52,6 +53,9 @@ Visualizer::Visualizer(glm::vec2 size){
     fs.internalformat = GL_RGBA;
     fs.useStencil = true;
     fbo.allocate(fs);
+#else
+    fbo.allocate(size.x, size.y, GL_RGBA);
+#endif
     
     initCam();
 //    sharedFbo.allocate(2560, 800, GL_RGBA);
