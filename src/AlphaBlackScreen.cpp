@@ -36,7 +36,7 @@ void AlphaBlackScreen::display(){
     }
 }
 
-void AlphaBlackScreen::setActiveness(bool state){
+void AlphaBlackScreen::setActiveness(bool state){ // Weird ... @02-2020
     bDoAlphaBlend = state;
     if(state){
         ofSetBackgroundAuto(false);

@@ -75,20 +75,16 @@ void jRectangle::display(){
     
     if(!m){
         ofTranslate(loc);
-        ofDrawRectangle(0, 0, size.x, size.y);
-        ofTranslate(-size*0.5);
-        ofRotateZDeg(rotation.z);
-        ofTranslate(size*0.5);
-    }
-        
-    if(!size.z){
-        if(m){
-            m->draw();
+        if(size.z){
+            ofDrawBox(0, 0, 0, size.x, size.y, size.z);
         } else{
             ofDrawRectangle(0, 0, size.x, size.y);
         }
+        ofTranslate(-size*0.5);
+        ofRotateZDeg(rotation.z);
+        ofTranslate(size*0.5);
     } else{
-        ofDrawBox(0, 0, 0, size.x, size.y, size.z);
+        m->draw();
     }
 
     ofPopMatrix();

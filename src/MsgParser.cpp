@@ -23,7 +23,8 @@ MsgParser::MsgParser(Visualizer* v){
         "linkVecField",
         "getFreePointers",
         "setMasterBrightness",
-        "resetCam"
+        "resetCam",
+        "setAlpha"
     };
     for(short i=0; i<commandKeys.size(); i++){
         string key = "/";
@@ -193,6 +194,9 @@ bool MsgParser::parseMsg(ofxOscMessage& m){
             break;
         case 14: // resetCam
             v->initCam();
+            break;
+        case 15: // setAlpha
+            v->setAlpha(m.getArgAsInt(0));
             break;
     }
     return false;

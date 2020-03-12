@@ -12,20 +12,13 @@ Visualizer::Visualizer(glm::vec2 size){
     post.init(ofGetWidth(), ofGetHeight());
     noisePP = post.createPass<NoiseWarpPass>();
     noisePP->setEnabled(false);
-//    post.createPass<BloomPass>()->setEnabled(true); // Wazig
     fxaaPP = post.createPass<FxaaPass>();
     fxaaPP->setEnabled(false);
-//    post.createPass<EdgePass>()->setEnabled(true); // Omlijningen alleen zichtbaar
     rgbPP = post.createPass<RGBShiftPass>();
     rgbPP->setEnabled(false);
     
     zoomPP = post.createPass<ZoomBlurPass>();
     zoomPP->setEnabled(false);
-    
-    //    contrastPP = post.createPass<ContrastPass>();
-    //    contrastPP->setEnabled(true);
-    //    contrastPP->setContrast(1.1);
-    //    bPostProcessing = true;
 #endif
 
 
@@ -34,6 +27,7 @@ Visualizer::Visualizer(glm::vec2 size){
 
     alphaScreen = new AlphaBlackScreen(true);
     addEvent((Event*)alphaScreen, 0);
+    setAlpha(255);
     
     for(int i=0; i<9; i++)
         busses.push_back(new Bus());
