@@ -25,7 +25,7 @@ particleSystem::particleSystem(){
     init(numParticles);
 }
 
-particleSystem::particleSystem(int numParticles, ofVec2f size, ofFloatColor color, int testIndex){
+particleSystem::particleSystem(int numParticles, ofVec2f size, ofFloatColor color, int testIndex, string clFile){
     this->numParticles = numParticles;
     this->color = color;
     dimensions = size;
@@ -36,22 +36,22 @@ particleSystem::particleSystem(int numParticles, ofVec2f size, ofFloatColor colo
     // init particles
 }
 
-void particleSystem::init(int numParticles){
+void particleSystem::init(int numParticles, string clFile){
     setType("particleSystem");
     particlesPos = new float2[numParticles];
     
     opencl.setupFromOpenGL(1); // 1 is NVIDIA?
 
     // create vbo
-    glGenBuffersARB(1, &vbo);
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo);
-    glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(float2) * numParticles, 0, GL_DYNAMIC_COPY_ARB);
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float2) * numParticles, 0, GL_DYNAMIC_COPY);
+    glBindBuffer(GL_ARRAY_BUFFER, 0); // Sort of unbind?
     
-    glGenBuffersARB(1, &cbo);
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, cbo);
-    glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(float4) * numParticles, 0, GL_DYNAMIC_COPY_ARB);
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+    glGenBuffers(1, &cbo);
+    glBindBuffer(GL_ARRAY_BUFFER, cbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float4) * numParticles, 0, GL_DYNAMIC_COPY);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
     
     
 //    particleCos.initBuffer(numParticles);
@@ -60,7 +60,6 @@ void particleSystem::init(int numParticles){
     particles.initBuffer(numParticles);
     particlePos.initFromGLObject(vbo, numParticles);
     particleCos.initFromGLObject(cbo, numParticles);
-    
     
 //    clImage.initWithTexture(10, 10, GL_RGBA);
 //    clImage.getTexture().setTextureMinMagFilter(GL_LINEAR, GL_LINEAR); // Remove this later
@@ -90,10 +89,8 @@ void particleSystem::init(int numParticles){
     particleCos.writeToDevice();
     
     
-    opencl.loadProgramFromFile("MSAOpenCL/Particle.cl");
+    opencl.loadProgramFromFile(clFile);
     opencl.loadKernel("updateParticle");
-    
-    
 
     opencl.kernel("updateParticle")->setArg(0, particles);
     opencl.kernel("updateParticle")->setArg(1, particlePos);
@@ -111,7 +108,6 @@ void particleSystem::init(int numParticles){
 void particleSystem::setVecField(JVecField* vF){
     vecField = vF;
     
-    
     cout << vF->density << endl;
     pixels = new unsigned char[(int)vF->density.x*(int)vF->density.y*4];
     return;
@@ -123,29 +119,21 @@ void particleSystem::setVecField(JVecField* vF){
     clImage.getTexture().setTextureMinMagFilter(GL_LINEAR, GL_LINEAR); // Remove this later :
 };
 
-
-void particleSystem::specificFunction(){
+bool particleSystem::copyVecFieldToCLImage(){
     if(vecField && vecField->vecTex.getWidth() != 0){ // Update vecField-info
         ofPixels p;
         vecField->vecTex.readToPixels(p);
-        int pixelIndex = 0;
-        for(int i=0; i<vecField->density.x; i++) {
-            for(int j=0; j<vecField->density.y; j++) {
-                int indexRGB    = pixelIndex * 4;
-                int indexRGBA    = pixelIndex * 4;
-
-                pixels[indexRGBA  ] = p[indexRGB];// .getColor(i, j).r;
-                pixels[indexRGBA+1] = p[indexRGB + 1]; // p.getColor(i, j).g;
-                pixels[indexRGBA+2] = p[indexRGB + 2]; // p.getColor(i, j).b;
-                pixels[indexRGBA+3] = p[indexRGB + 3];
-                pixelIndex++;
-            }
-        }
-//        cout << "Before writing to the CL image" << endl;
+        memcpy(pixels, p.getData(), p.getWidth() * p.getHeight() * 4);
         clImage.write(pixels, true);
+        return true;
     } else{
-        return; // Test: only work with vecField for now
+        return false; // Test: only work with vecField for now
     }
+}
+
+void particleSystem::specificFunction(){
+    if(!copyVecFieldToCLImage())
+        return;
     
     opencl.kernel("updateParticle")->setArg(2, dimensions);
     opencl.kernel("updateParticle")->setArg(3, clImage);
@@ -157,7 +145,6 @@ void particleSystem::specificFunction(){
     
     glFlush();
     
-//    cout << "Before run1D" << endl;
     opencl.kernel("updateParticle")->run1D(numParticles);
 //    opencl.flush();
 }
@@ -166,23 +153,22 @@ void particleSystem::display(){
     ofSetColor(255);
     opencl.finish();
     
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glVertexPointer(2, GL_FLOAT, 0, 0);
     glEnableClientState(GL_VERTEX_ARRAY);
     
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, cbo);
+    glBindBuffer(GL_ARRAY_BUFFER, cbo);
     glColorPointer(4, GL_FLOAT, 0, 0);
     glEnableClientState(GL_COLOR_ARRAY);
     
     glPointSize(1);
     glDrawArrays(GL_POINTS, 0, numParticles);
     
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     opencl.finish();
-//    opencl.finish();
-//
+    
 //    glColor4f(color.r, color.g, color.b, color.a);
 //    glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo);
 //

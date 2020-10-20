@@ -30,6 +30,7 @@
 #include "IFLogo.hpp"
 #include "JShaderTest.hpp"
 #include "MultiMeshMaybeTomorrow.hpp"
+#include "JPhysarum.hpp"
 
 using namespace std;
 

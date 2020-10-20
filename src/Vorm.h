@@ -80,7 +80,7 @@ typedef unsigned short uint16;
     void drawLines(Particle *p1, Particle *p2);
     
     void unConnect();
-    void ownDtor();
+    void ownDtor() override;
     
     void switchState();
     void addNoiseToAllParticles();

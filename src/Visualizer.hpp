@@ -56,6 +56,8 @@ typedef unsigned char uint8;
     void update();
     void display();
     
+    glm::vec2 size;
+    
     void setAlpha(int alpha, bool bDo = true);
     void setBrightness(unsigned char b);
     
@@ -82,7 +84,8 @@ typedef unsigned char uint8;
     bool bMirror = false;
     bool bAddMirror = false;
 
-    void fitFadeScreen(glm::vec2 size = glm::vec2(0, 0));
+//    void fitFadeScreen(glm::vec2 size = glm::vec2(0, 0));
+    void makeFit(glm::vec2 size);
     
     fadeScreen* fade = nullptr;
     AlphaBlackScreen* alphaScreen = nullptr;
@@ -124,14 +127,17 @@ typedef unsigned char uint8;
 //    Image* mask;
     ofImage mask;
     unsigned char maskBrightness = 0;
+    bool bCam = true;
     ofEasyCam cam;
+    cameraController* camController;
     void initCam();
     
     ofTrueTypeFont verdana30;
-    cameraController* camController;
+    
 //    ofFbo sharedFbo, sharedFbo2;
     ofFbo circularMask;
-    bool bDrawCirclularMask = true;
+    bool bDrawCirclularMask = false;
+    
     void initCircularMaskFbo(glm::vec2 size, int num=1);
 private:
     void loadLastMaskFile();

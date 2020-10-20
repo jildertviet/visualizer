@@ -60,9 +60,9 @@ public:
     string path;
     bool load(string path);
     
-    void ownDtor();
-    void display();
-    void specificFunction();
+    void ownDtor() override;
+    void display() override;
+    void specificFunction() override;
     
     ofVideoPlayer player;
     

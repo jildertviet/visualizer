@@ -5,8 +5,9 @@
 
 // ./visualizer width height framerate numWindows fullscreen order
 // ./visualizer 3840 1080 30 2 f 0 1
+
 int main(int argc, char *argv[]){
-    shared_ptr<ofApp> app(new ofApp()); // Arguments stuff (for passing ip and UDP-port)
+    shared_ptr<ofApp> app(new ofApp()); 
     app->arguments = vector<string>(argv, argv + argc);
     for(int i=0; i<app->arguments.size(); i++)
         cout << "arg[" << i << "]: " << app->arguments[i] << endl;
@@ -68,7 +69,8 @@ int main(int argc, char *argv[]){
         fboWindow->bFullScreen = ofToBool(app->arguments[5]);
         ofRunApp(secondWindow, fboWindow);
     } else{
-        cout << "Single window" << endl;
+        app->size = glm::vec2(1024, 768);
+        cout << "Single window [" << app->size.x << ", " << app->size.y << "]\n" << endl;
         mainSettings.setSize(app->size.x, app->size.y);
         shared_ptr<ofAppBaseWindow> mainWindow = ofCreateWindow(mainSettings);
         ofRunApp(mainWindow, app);

@@ -29,7 +29,7 @@ void AlphaBlackScreen::display(){
         } else{
             ofFill();
             ofSetColor(colors[0]);
-            ofDrawRectangle(0, 0, ofGetViewportWidth(), ofGetViewportHeight());
+            ofDrawRectangle(0, 0, size.x, size.y);
         }
     } else{
         return;

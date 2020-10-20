@@ -3,6 +3,7 @@
 #include "Visualizer.hpp"
 
 Visualizer::Visualizer(glm::vec2 size){
+    this->size = size;
     for(unsigned short i=0; i<MAX_EVENTS_PTRS; i++)
         events[i] = nullptr;
     for(int i=0; i<NUMLAYERS; i++)
@@ -26,6 +27,7 @@ Visualizer::Visualizer(glm::vec2 size){
     addEvent((Event*)fade, NUMLAYERS-1);
 
     alphaScreen = new AlphaBlackScreen(true);
+    alphaScreen->size = size;
     addEvent((Event*)alphaScreen, 0);
     setAlpha(255);
     
@@ -44,7 +46,7 @@ Visualizer::Visualizer(glm::vec2 size){
     fs.numSamples = 8;
     fs.width = size.x;
     fs.height = size.y;
-    fs.internalformat = GL_RGBA;
+    fs.internalformat = GL_RGBA16;
     fs.useStencil = true;
     fbo.allocate(fs);
 #else
@@ -76,9 +78,8 @@ void Visualizer::initCam(){
 Visualizer::~Visualizer(){
     cout << "Visualizer deleted" << endl;
     // Delete all events?
-    for(int i=0; i<layers.size(); i++){
+    for(int i=0; i<layers.size(); i++)
         layers[i][0].deleteNext();
-    }
     for(int i=0; i<mappers.size(); i++)
         delete mappers[i];
 }
@@ -89,16 +90,12 @@ void Visualizer::deconstructor(){
 
 void Visualizer::display(){
 #if USE_PP
-        // copy enable part of gl state
         glPushAttrib(GL_ENABLE_BIT);
         // setup gl state
 //        glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
-        // begin scene to post process
         post.begin();
 #endif
-
-//    cam.begin();
 
     if(bRotate){
 //        ofPushMatrix();
@@ -111,13 +108,10 @@ void Visualizer::display(){
         ofRotateY(180);
     }
     
-//    mirror.begin();
     ofSetColor(255);
-    fbo.draw(0,0); // See update()
+    fbo.draw(0,0); // See update();
     
     if(bAddMirror){
-//        ofPixels pixels;
-//        ofTexture screen;
         ofPushMatrix();
 
         ofTranslate(ofGetWindowWidth(), 0);
@@ -144,7 +138,8 @@ void Visualizer::display(){
         ofSetColor(255);
         circularMask.draw(0, 0);
     }
-    fade->displayMain();
+    
+    fade->display();
 }
 
 void Visualizer::update(){
@@ -157,20 +152,21 @@ void Visualizer::update(){
 //    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA); // Found this on the OF forum
     // Goal: two grey area's should be brighter when they overlap, currently they merge in the same greyness
     
-    
+//    ofEnableBlendMode(OF_BLENDMODE_ADD);
+//    ofEnableDepthTest();
     fbo.begin();
-//        ofClear(0, 0, 0, 0);
-        ofClearAlpha();
-    
         alphaScreen->displayMain();
-        layers[1]->displayMain(); // Non-cam layer
+        layers[1]->displayMain(); // Non-cam layer back
 
-        cam.begin();
+        if(bCam)
+            cam.begin();
         for(uint8 i=2; i<layers.size()-2; i++) // Don't draw the last one, that's fade, happens at end
             layers[i]->displayMain();
-        cam.end();
-    
-        layers[NUMLAYERS-2]->displayMain(); // Non-cam layer
+        if(bCam)
+            cam.end();
+
+        layers[NUMLAYERS-2]->displayMain(); // Non-cam layer front
+        ofClearAlpha();
     fbo.end();
 }
 
@@ -288,15 +284,26 @@ void Visualizer::killAll(){
         events[i] = nullptr;
 }
 
-void Visualizer::fitFadeScreen(glm::vec2 size){
-    if(fade->size == size)
+void Visualizer::makeFit(glm::vec2 size){
+    if(this->size == size)
         return;
-    if(size == glm::vec2(0, 0)){
-        fade->size = ofGetWindowSize();
-    } else{
-        fade->size = size;
+    fade->size = size;
+    alphaScreen->size = size;
+    if(fbo.getWidth() != size.x || fbo.getHeight() != size.y){
+        fbo.allocate(size.x, size.y, fbo.getTexture().getTextureData().glInternalFormat);
     }
+    this->size = size;
 }
+//void Visualizer::fitFadeScreen(glm::vec2 size){
+//    cout << size << endl;
+//    if(fade->size == size)
+//        return;
+//    if(size == glm::vec2(0, 0)){
+//        fade->size = ofGetWindowSize();
+//    } else{
+//        fade->size = size;
+//    }
+//}
 
 vector<float> Visualizer::vec(float a){
     vector<float> v;
@@ -331,9 +338,11 @@ void Visualizer::loadLastMaskFile(){
     ofBuffer b;
     b = f.readToBuffer();
     string path = b.getText();
-    mask.load(path);
-    maskBrightness = 0;
-    bMask = true;
+    if(path.length() > 5){
+        mask.load(path);
+        maskBrightness = 0;
+        bMask = true;
+    }
 }
 
 ofxOscMessage Visualizer::getAllEvents(){

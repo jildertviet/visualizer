@@ -33,6 +33,7 @@
 #include "imageFloat.hpp"
 #include "jTxt.hpp"
 #include "MsgParser.hpp"
+#include "JPhysarum.hpp"
 
 #ifdef __APPLE__
     #include "ofxSyphon.h"

@@ -145,7 +145,7 @@ void eLive::F14(){ // Fade2 Red||
 }
 
 void eLive::F15(){ // Fit fadeScreen ||
-    v->fitFadeScreen();
+    v->makeFit(ofGetWindowSize());
     
     if(SPLIT){
         fade1->loc = ofVec2f(0,0);

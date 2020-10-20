@@ -19,11 +19,11 @@ public:
     jRectangle(float millisTime, ofVec2f loc, ofVec2f size, ofColor color=ofColor(255,255), float attack=100, float release=100, ofVec2f direction=ofVec2f(-1,0), bool move=true); // Temporary
     
     jRectangle(ofVec3f loc, ofVec3f size=ofGetWindowSize()); // Infite
-    void ownDtor();
+    void ownDtor() override;
     
     void test(){cout<<"Rectangle test"<<endl;};
-    virtual void display();
-    void specificFunction();
+    virtual void display() override;
+    void specificFunction() override;
     
     
     float topspeed = 1.0;

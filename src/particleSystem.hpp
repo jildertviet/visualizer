@@ -20,10 +20,10 @@
 class particleSystem: public Event{
 public:
     particleSystem();
-    particleSystem(int numParticles, ofVec2f size = ofVec2f(1280, 800), ofFloatColor color=ofFloatColor(1.0, 1.0, 1.0, 0.05), int testIndex=1);
-    void init(int numParticles);
+    particleSystem(int numParticles, ofVec2f size = ofVec2f(1280, 800), ofFloatColor color=ofFloatColor(1.0, 1.0, 1.0, 0.05), int testIndex=1, string clFile = "MSAOpenCL/Particle.cl");
+    void init(int numParticles, string clFile = "MSAOpenCL/Particle.cl");
     unsigned int numParticles = 1000000;
-    void specificFunction() override;
+    virtual void specificFunction() override;
     void display() override;
     ofFloatColor color = ofFloatColor(1.0, 1.0, 1.0, 0.05);
     
@@ -49,9 +49,10 @@ public:
     float fadeTime = 0.001;
     float destAlpha = 0.4;
     void setColor(ofColor c, int index=0) override;
-private:
+    virtual bool copyVecFieldToCLImage();
     JVecField* vecField = nullptr;
-     unsigned char* pixels;
+    unsigned char* pixels;
+private:
 };
 
 

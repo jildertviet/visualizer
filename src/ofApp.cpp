@@ -4,6 +4,12 @@
 #define USE_SERVER  true
 #define FBO_DRAW_MIDDLE_ONLY true
 
+
+/*
+ When using bUseFbo: can I use the fbo from the visualizer directly? 
+ 
+ */
+
 //--------------------------------------------------------------
 void ofApp::setup() {
     if(bUseFbo){
@@ -18,18 +24,16 @@ void ofApp::setup() {
         fs.useStencil = true;
         f.allocate(fs);
         
-        mesh.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
-        
-//        size.x *= 0.5; // TEST (window size is smaller
-        texCoords = {glm::vec2(0,0), glm::vec2(size.x, 0), glm::vec2(size.x, size.y), glm::vec2(0, size.y)};
-        meshVertices = {glm::vec3(0, 0, 0), glm::vec3(size.x, 0, 0), glm::vec3(size.x, size.y, 0), glm::vec3(0, size.y, 0)};
-        for(char i=0; i<4; i++){
-            mesh.addTexCoord(texCoords[i] + glm::vec2(size.x, 0)); // Center piece
-            mesh.addVertex(meshVertices[i]);
-        }
-//        size.x *= 2; // TEST
     }
-
+    
+    mesh.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
+    texCoords = {glm::vec2(0,0), glm::vec2(size.x, 0), glm::vec2(size.x, size.y), glm::vec2(0, size.y)};
+    meshVertices = {glm::vec3(0, 0, 0), glm::vec3(size.x, 0, 0), glm::vec3(size.x, size.y, 0), glm::vec3(0, size.y, 0)};
+    for(char i=0; i<4; i++){
+//        mesh.addTexCoord(texCoords[i] + glm::vec2(size.x, 0)); // Center piece
+        mesh.addTexCoord(texCoords[i]); // Center piece
+        mesh.addVertex(meshVertices[i]);
+    }
 //    if(!bFullScreen)
 //        ofSetWindowShape(size.x, size.y); // TEST
 
@@ -42,16 +46,18 @@ void ofApp::setup() {
 //    ofSetVerticalSync(true);
     ofSetFrameRate(frameRate);
 //    ofEnableSmoothing(); // CAUSES FRAMERATE DROPS
-    ofEnableAlphaBlending();
-    ofEnableDepthTest();
+    
+    
+//    ofEnableAlphaBlending();
+//    ofEnableDepthTest();
     
     if(bUseFbo){
         visualizer = new Visualizer(glm::vec2(size.x*2, size.y));
-        visualizer->fitFadeScreen(glm::vec2(size.x*2, size.y)); // Also on window-resize!?
+        visualizer->makeFit(glm::vec2(size.x*2, size.y)); // Also on window-resize!?
         visualizer->initCircularMaskFbo(glm::vec2(size.x*2, size.y), 2);
     } else{
         visualizer = new Visualizer(size);
-        visualizer->fitFadeScreen(size); // Also on window-resize!?
+        visualizer->makeFit(size); // Also on window-resize!?
         visualizer->initCircularMaskFbo(size, numCircles);
     }
     parser = new MsgParser(visualizer);
@@ -66,37 +72,15 @@ void ofApp::setup() {
 #ifdef  __APPLE__
     syphonServer.setName("visualizer");
 #endif
-
-//    particleSystem* ps = (particleSystem*)visualizer->addEvent(new particleSystem(2000000), NON_CAM_FRONT);
-//
-//    JVecField* vecField = (JVecField*)visualizer->addEvent(new JVecField(), NON_CAM_FRONT);
-//    vecField->speed = 0.01;
-//    vecField->setSize(ofVec3f(1280, 800, 0)); // Should be adjustable!!! (Check particleSystem class)
-//    vecField->setDensity(ofVec2f(128, 80));
-//    vecField->drawMode = VECFIELD_MODE::HIDE;
-//    vecField->mode = VECFIELD_MODE::UNDERLAYING;
-//    vecField->complexity = 50;
-//    vecField->setColor(ofColor(0, 0, 0, 0)); // Transparant
-//    vecField->underlayer = &visualizer->fbo;
-//
-//    ps->setVecField(vecField);
     
-//    JVideoPlayer* v = new JVideoPlayer();
-//    v->load("video/mc4.mp4");
-//    visualizer->addEvent((Event*)v, NON_CAM_BACK);
-
-//    JShaderTest* e = new JShaderTest(ofVec2f(2560, 800));
-//    visualizer->addEvent((Event*)e);
-//    e = new JShaderTest(ofVec2f(2560, 800));
-//    e->loc = ofVec2f(100, 0);
-//    visualizer->addEvent((Event*)e);
+//    visualizer->addEvent((Event*)new JPhysarum(glm::vec2(0, 0), glm::vec2(1024, 1024)), NON_CAM_FRONT);
 }
 
 
-//--------------------------------------------------------------
+//--8------------------------------------------------------------
 void ofApp::update() {
-    if(!bFullScreen)
-        ofSetWindowTitle(ofToString((int)ofGetFrameRate()));
+//    if(!bFullScreen)
+    ofSetWindowTitle(ofToString((int)ofGetFrameRate()));
 
     while(SCreceiver.hasWaitingMessages()){
         msg.clear();
@@ -135,9 +119,9 @@ void ofApp::update() {
         ofClear(0);
         visualizer->update();
         visualizer->display();
-        ofNoFill();
-        ofSetLineWidth(10);
-        ofSetColor(255);
+//        ofNoFill();
+//        ofSetLineWidth(10);
+//        ofSetColor(255);
         
 //        ofDrawRectangle(0, 0, f.getWidth() * (1/3.) - 5, f.getHeight() - 5);
 //        ofDrawRectangle(f.getWidth() * (1/3.), 0, f.getWidth() * (2/3.) - 5, f.getHeight() - 5);
@@ -173,7 +157,8 @@ void ofApp::update() {
         }
     }
 #ifdef  __APPLE__
-    syphonServer.publishTexture(&visualizer->fbo.getTexture());
+    if(USE_SERVER)
+        syphonServer.publishTexture(&visualizer->fbo.getTexture());
 #endif
 }
 
@@ -183,29 +168,33 @@ void ofApp::update() {
 void ofApp::draw(){
     ofBackground(0);
 //    return;
-    if(bUseFbo){
+//    if(bUseFbo){
+    ofSetColor(255, 255 - visualizer->fade->colors[0].a);
         switch(fboDisplayMode){
             case 0:
-                f.getTexture().bind();
+                visualizer->fbo.getTexture().bind();
                 mesh.draw();
-                f.getTexture().unbind();
+                visualizer->fbo.getTexture().unbind();
                 if(bEditMode){
                     for(char i=0; i<4; i++)
                         ofDrawCircle(meshVertices[i], 10);
                 }
                 break;
             case 1: // Stretch
-                f.draw(0, 0, ofGetWidth(), ofGetHeight());
+                visualizer->fbo.draw(0, 0, ofGetWidth(), ofGetHeight());
                 break;
             case 2: //
-                f.draw(0, ofGetHeight() * 0.5 - (0.5 * (ofGetHeight() / (f.getWidth() / ofGetWidth()))), ofGetWidth(), ofGetHeight() / (f.getWidth() / ofGetWidth()));
+                visualizer->fbo.draw(0, ofGetHeight() * 0.5 - (0.5 * (ofGetHeight() / (f.getWidth() / ofGetWidth()))), ofGetWidth(), ofGetHeight() / (f.getWidth() / ofGetWidth()));
                 break;
         }
-    } else{
-        visualizer->display();
-    }
+//    visualizer->fade->display();
+//    } else{
+//        visualizer->display();
+//    }
     if(bTemp)
         ofSaveFrame();
+
+//    visualizer->getLast()->display();
 }
 
 //--------------------------------------------------------------
@@ -214,9 +203,9 @@ void ofApp::exit() {}
 void ofApp::windowResized(int w, int h){
     if(visualizer){
         if(bUseFbo){
-            visualizer->fitFadeScreen(glm::vec2(visualizer->fbo.getWidth(), visualizer->fbo.getHeight()));
+            visualizer->makeFit(glm::vec2(visualizer->fbo.getWidth(), visualizer->fbo.getHeight()));
         } else{
-            visualizer->fitFadeScreen(glm::vec2(w, h));
+            visualizer->makeFit(glm::vec2(w, h));
         }
     }
 }
@@ -290,7 +279,8 @@ void ofApp::mousePressed(int x, int y, int button){
         mesh.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
         
         for(char i=0; i<4; i++){
-            mesh.addTexCoord(texCoords[i] + ofVec2f(1280, 0)); // Center piece
+//            mesh.addTexCoord(texCoords[i] + ofVec2f(1280, 0)); // Center piece
+            mesh.addTexCoord(texCoords[i]); // Center piece
             mesh.addVertex(meshVertices[i]);
         }
     }

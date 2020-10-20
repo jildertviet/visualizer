@@ -24,7 +24,9 @@ MsgParser::MsgParser(Visualizer* v){
         "getFreePointers",
         "setMasterBrightness",
         "resetCam",
-        "setAlpha"
+        "setAlpha",
+        "setCircularMaskAlpha",
+        "setCamEnabled"
     };
     for(short i=0; i<commandKeys.size(); i++){
         string key = "/";
@@ -49,7 +51,8 @@ MsgParser::MsgParser(Visualizer* v){
         "JShaderTest",
         "JNoise",
         "JLinesFalling",
-        "JIFLogo"
+        "JIFLogo",
+        "JPhysarum"
     };
     for(short i=0; i<typeKeys.size(); i++)
         types[typeKeys[i]] = i + 1;
@@ -76,7 +79,13 @@ MsgParser::MsgParser(Visualizer* v){
         "rotation",
         "drawMode",
         "alpha",
-        "quadColor"
+        "quadColor",
+        "sensorAngle",
+        "sensorDistance",
+        "turnAngle",
+        "decay",
+        "deposit",
+        "balance"
     };
     for(short i=0; i<valueKeys.size(); i++)
         values[valueKeys[i]] = i + 1;
@@ -198,13 +207,19 @@ bool MsgParser::parseMsg(ofxOscMessage& m){
         case 15: // setAlpha
             v->setAlpha(m.getArgAsInt(0));
             break;
+        case 16: // setCircularMaskAlpha
+            v->bDrawCirclularMask = m.getArgAsBool(0);
+            break;
+        case 17:
+            v->bCam = m.getArgAsBool(0);
+            break;
     }
     return false;
 }
 
 bool MsgParser::make(ofxOscMessage& m){
     cout << "Make " << m.getArgAsString(0) << " with ID: " << m.getArgAsInt(1) << endl;
-    Event* e;
+    Event* e = nullptr;
     switch(types[m.getArgAsString(0)]){
         case 1: // jRectangle
             e = new jRectangle();
@@ -275,8 +290,13 @@ bool MsgParser::make(ofxOscMessage& m){
             break;
         case 17:
             e = new IFLogo();
-            break;
             return false;
+            break;
+        case 18:
+            glm::vec2 size = glm::vec2(m.getArgAsFloat(3), m.getArgAsFloat(4));
+            cout << "Create JPhysarum w/ size: " << size << endl;
+            e = new JPhysarum(glm::vec2(0, 0), size);
+            break;
     }
     
     e->id = m.getArgAsInt(1);
@@ -418,6 +438,30 @@ void MsgParser::setVal(ofxOscMessage& m){ // Default: /setVal, 0, "size", 100, 2
                                                    );
                     ((jRectangle*)e)->setAlpha(m.getArgAsInt(14));
                 }
+            case 23:
+                if(e->type == "JPhysarum")
+                    ((JPhysarum*)e)->sensorAngle = m.getArgAsFloat(2);
+                break;
+            case 24:
+                if(e->type == "JPhysarum")
+                    ((JPhysarum*)e)->sensorDistance = m.getArgAsFloat(2);
+                break;
+            case 25:
+                if(e->type == "JPhysarum")
+                    ((JPhysarum*)e)->turnAngle = m.getArgAsFloat(2);
+                break;
+            case 26:
+                if(e->type == "JPhysarum")
+                    ((JPhysarum*)e)->decay = m.getArgAsFloat(2);
+                break;
+            case 27:
+                if(e->type == "JPhysarum")
+                    ((JPhysarum*)e)->depositAmount = m.getArgAsFloat(2);
+                break;
+            case 28:
+                if(e->type == "JPhysarum")
+                    ((JPhysarum*)e)->balance = m.getArgAsFloat(2);
+                break;
         }
     } else{
         cout << "Event not found, id: " << m.getArgAsInt(0) << endl;
