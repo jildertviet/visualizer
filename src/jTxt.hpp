@@ -18,5 +18,6 @@ public:
     void display();
     string txt;
     void setText(string txt);
+    bool* bCamEnabled = nullptr;
 };
 #endif /* jText_hpp */

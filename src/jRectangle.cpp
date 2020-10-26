@@ -74,15 +74,20 @@ void jRectangle::display(){
     ofPushMatrix();
     
     if(!m){
-        ofTranslate(loc);
+        ofTranslate(loc + (size*0.5));
+        ofRotateXDeg(rotation.x);
+        ofRotateYDeg(rotation.y);
+        ofRotateZDeg(rotation.z);
+        ofTranslate(-(size*0.5));
+//        ofTranslate(loc);
         if(size.z){
             ofDrawBox(0, 0, 0, size.x, size.y, size.z);
         } else{
             ofDrawRectangle(0, 0, size.x, size.y);
         }
-        ofTranslate(-size*0.5);
-        ofRotateZDeg(rotation.z);
-        ofTranslate(size*0.5);
+//        ofTranslate(-size*0.5); // ?
+//        ofRotateZDeg(rotation.z);
+//        ofTranslate(size*0.5);
     } else{
         m->draw();
     }

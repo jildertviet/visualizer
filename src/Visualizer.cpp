@@ -46,7 +46,7 @@ Visualizer::Visualizer(glm::vec2 size){
     fs.numSamples = 8;
     fs.width = size.x;
     fs.height = size.y;
-    fs.internalformat = GL_RGBA16;
+    fs.internalformat = GL_RGBA16F;
     fs.useStencil = true;
     fbo.allocate(fs);
 #else
@@ -61,13 +61,13 @@ Visualizer::Visualizer(glm::vec2 size){
 void Visualizer::initCam(){
     cam.reset();
 //    cam.rotate(-180, ofVec3f(0,1,0));
-    cam.setPosition(0, 0, 0);
-    cam.rotate(-180, ofVec3f(1,0,0));
-    cam.setDistance(fbo.getWidth() * 0.25);
-    cam.lookAt(ofVec3f(0,0,0));
+//    cam.setPosition(0, 0, 0);
+//    cam.rotate(-180, ofVec3f(1,0,0));
+//    cam.setDistance(fbo.getWidth() * 0.25);
+//    cam.lookAt(ofVec3f(0,0,0));
     
 //    cam.move(0, ofGetHeight() * -0.5, 0);
-    cam.move(fbo.getWidth() * 0.5, fbo.getHeight() * 0.5, 0); // Temp for ADEtje
+//    cam.move(fbo.getWidth() * 0.5, fbo.getHeight() * 0.5, 0); // Temp for ADEtje
     
     if(!camController){
         camController = new cameraController(&cam);
@@ -155,15 +155,22 @@ void Visualizer::update(){
 //    ofEnableBlendMode(OF_BLENDMODE_ADD);
 //    ofEnableDepthTest();
     fbo.begin();
+        ofEnableSmoothing();
         alphaScreen->displayMain();
         layers[1]->displayMain(); // Non-cam layer back
 
-        if(bCam)
-            cam.begin();
+    if(bCam){
+        ofPushMatrix();
+        cam.begin();
+        ofScale(1, -1, 1);
+        ofTranslate(-ofGetWidth()/2., -ofGetHeight()/2.);
+    }
         for(uint8 i=2; i<layers.size()-2; i++) // Don't draw the last one, that's fade, happens at end
             layers[i]->displayMain();
-        if(bCam)
+    if(bCam){
             cam.end();
+        ofPopMatrix();
+    }
 
         layers[NUMLAYERS-2]->displayMain(); // Non-cam layer front
         ofClearAlpha();

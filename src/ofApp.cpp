@@ -23,7 +23,6 @@ void ofApp::setup() {
         fs.internalformat = GL_RGB;
         fs.useStencil = true;
         f.allocate(fs);
-        
     }
     
     mesh.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
@@ -35,7 +34,7 @@ void ofApp::setup() {
         mesh.addVertex(meshVertices[i]);
     }
 //    if(!bFullScreen)
-//        ofSetWindowShape(size.x, size.y); // TEST
+    ofSetWindowShape(size.x, size.y); // TEST
 
     ofSetCircleResolution(360);
 //    ofSetFullscreen(bFullScreen);
@@ -45,7 +44,7 @@ void ofApp::setup() {
 //    ofSetBackgroundAuto(false);
 //    ofSetVerticalSync(true);
     ofSetFrameRate(frameRate);
-//    ofEnableSmoothing(); // CAUSES FRAMERATE DROPS
+    ofEnableSmoothing(); // CAUSES FRAMERATE DROPS
     
     
 //    ofEnableAlphaBlending();
@@ -162,11 +161,12 @@ void ofApp::update() {
 #endif
 }
 
-
-
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofBackground(0);
+    ofBackground(255,0,0);
+    ofSetColor(255);
+    ofDrawRectangle(0, 0, 100, 100);
+    
 //    return;
 //    if(bUseFbo){
     ofSetColor(255, 255 - visualizer->fade->colors[0].a);
@@ -193,7 +193,9 @@ void ofApp::draw(){
 //    }
     if(bTemp)
         ofSaveFrame();
-
+//    ofSetColor(255);
+    
+//    ofDrawRectangle(0, 0, 100, 100);
 //    visualizer->getLast()->display();
 }
 

@@ -26,7 +26,11 @@ MsgParser::MsgParser(Visualizer* v){
         "resetCam",
         "setAlpha",
         "setCircularMaskAlpha",
-        "setCamEnabled"
+        "setCamEnabled",
+        "camTilt",
+        "camPan",
+        "camRoll",
+        "camRotateAround"
     };
     for(short i=0; i<commandKeys.size(); i++){
         string key = "/";
@@ -85,7 +89,8 @@ MsgParser::MsgParser(Visualizer* v){
         "turnAngle",
         "decay",
         "deposit",
-        "balance"
+        "balance",
+        "fill"
     };
     for(short i=0; i<valueKeys.size(); i++)
         values[valueKeys[i]] = i + 1;
@@ -173,8 +178,10 @@ bool MsgParser::parseMsg(ofxOscMessage& m){
             break;
         case 9:{ // changeAngleOffset
             Event* e = v->getEventById(m.getArgAsInt(0));
-            if(e && e->type == "Vorm")
-                ((Vorm*)e)->changeAngleOffset(m.getArgAsFloat(1));
+            if(e){
+                if(e->type == "Vorm")
+                    ((Vorm*)e)->changeAngleOffset(m.getArgAsFloat(1));
+            }
         }
             break;
         case 10:{ // getInfo
@@ -213,6 +220,19 @@ bool MsgParser::parseMsg(ofxOscMessage& m){
         case 17:
             v->bCam = m.getArgAsBool(0);
             break;
+        case 18: // Tilt
+            v->cam.tiltDeg(m.getArgAsFloat(0));
+            break;
+        case 19: // Pan
+            v->cam.panDeg(m.getArgAsFloat(0));
+            break;
+        case 20: // Roll
+            v->cam.rollDeg(m.getArgAsFloat(0));
+            break;
+        case 21: // camRotateAround
+            v->cam.rotateAroundDeg(m.getArgAsFloat(0), glm::vec3(m.getArgAsFloat(1), m.getArgAsFloat(2), m.getArgAsFloat(3)), glm::vec3(0, 0, 0));
+            break;
+            
     }
     return false;
 }
@@ -259,6 +279,7 @@ bool MsgParser::make(ofxOscMessage& m){
             break;
         case 9:
             e = new jText(&(v->verdana30));
+            ((jText*)e)->bCamEnabled = &(v->bCam);
             break;
         case 10:
             e = new JMesh();
@@ -314,13 +335,26 @@ bool MsgParser::make(ofxOscMessage& m){
             v->addEvent(e, m.getArgAsInt(2), e->id); // Specific layer
         }
     } else{
-        v->addEvent(e, 2, e->id);
+        v->addEvent(e, 2, e->id); // Default layer
     }
+    // Send back pointer (as long) to SC. Issue: this takes time. When you call event.create(); event.setLoc([0,0]); from SC that second call won't have this pointer yet...
+//    ofxOscMessage n;
+//    n.setAddress("/makeConfirm");
+//    n.addIntArg(m.getArgAsInt(1)); // ID from SC
+//    long pointerToInt = reinterpret_cast<long>(e); // This int can later be casted to an Event*, but check if it's allocated/in use before using!
+//    int a = (int)(pointerToInt >> 32);
+//    int b = (int)pointerToInt;
+//    n.addIntArg(a);
+//    n.addIntArg(b);
+//    SCsender->sendMessage(n);
 return false;
 }
 
 void MsgParser::setVal(ofxOscMessage& m){ // Default: /setVal, 0, "size", 100, 200
     Event* e = v->getEventById(m.getArgAsInt(0));
+    // Default: /setVal, a, b, "size", 100, 200: a and b are two uint_32 forming a long together, that can be casted to a Event*
+//    long pointerAsInt = (long)m.getArgAsInt(1) << 32 | m.getArgAsInt(2) & 0xFFFFFFFFL;
+//    Event* f = reinterpret_cast<Event*>(pointerAsInt);
     if(e){
         cout << "Event found, id: " << m.getArgAsInt(0) << ", addr: " << e << endl;
         switch (values[m.getArgAsString(1)]) {
@@ -461,6 +495,9 @@ void MsgParser::setVal(ofxOscMessage& m){ // Default: /setVal, 0, "size", 100, 2
             case 28:
                 if(e->type == "JPhysarum")
                     ((JPhysarum*)e)->balance = m.getArgAsFloat(2);
+                break;
+            case 29:
+                e->bFill = m.getArgAsBool(2);
                 break;
         }
     } else{

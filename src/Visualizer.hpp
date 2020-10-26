@@ -77,6 +77,7 @@ typedef unsigned char uint8;
     
     Event* getLast(){return last;}
     Event* getEventById(int id);
+    Event* lastCalled = nullptr;
     
     static bool checkIfNull(Event* e);
     static bool checkIfNullM(Mapper* m);
