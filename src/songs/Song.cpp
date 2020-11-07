@@ -41,7 +41,7 @@ void Song::doControlFunc(int note, int value){
     switch(note){
         case 56:
             cout << "Set brightness" << endl;
-            v->fade->setBrightness(ofMap(value, 0, 127, 0, 255));
+            v->setBrightness(ofMap(value, 0, 127, 0, 255));
             break;
         case 55:
             v->setAlpha(ofMap(value, 0, 127, 0, 255));

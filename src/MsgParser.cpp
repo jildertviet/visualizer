@@ -30,7 +30,8 @@ MsgParser::MsgParser(Visualizer* v){
         "camTilt",
         "camPan",
         "camRoll",
-        "camRotateAround"
+        "camRotateAround",
+        "setBackground"
     };
     for(short i=0; i<commandKeys.size(); i++){
         string key = "/";
@@ -231,6 +232,11 @@ bool MsgParser::parseMsg(ofxOscMessage& m){
             break;
         case 21: // camRotateAround
             v->cam.rotateAroundDeg(m.getArgAsFloat(0), glm::vec3(m.getArgAsFloat(1), m.getArgAsFloat(2), m.getArgAsFloat(3)), glm::vec3(0, 0, 0));
+            break;
+        case 22:
+            ofColor c = ofColor(m.getArgAsInt(0), m.getArgAsInt(1), m.getArgAsInt(2));
+            v->alphaScreen->setColor(c);
+            v->alphaScreen->setActiveness(true);
             break;
             
     }
@@ -540,6 +546,7 @@ void MsgParser::addEnv(ofxOscMessage& m){
         return;
     vector<float> times = {m.getArgAsFloat(2), m.getArgAsFloat(3), m.getArgAsFloat(4)};
     vector<float> values = {m.getArgAsFloat(5), m.getArgAsFloat(6), m.getArgAsFloat(7), m.getArgAsFloat(8)};
+    
     bool bSave = m.getArgAsBool(10); // 9 is killArg
     switch(envValues[m.getArgAsString(1)]){
         case 1: // Width
@@ -549,8 +556,12 @@ void MsgParser::addEnv(ofxOscMessage& m){
             e->addEnv(values, times, &e->size.y);
             break;
         case 3:{ // Brightness
+            for(int i=0; i<values.size(); i++){ // Replace -1 with current alpha value
+                if(values[i] == -1)
+                    values[i] = e->colors[0].a;
+            }
             e->addEnvAlpha(values, times);
-            if(m.getArgAsBool(9)){
+            if(m.getArgAsBool(9)){ // bKill
                 e->setEndTime(times[0] + times[1] + times[2] + 1);
                 e->active = true;
             }

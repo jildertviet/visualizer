@@ -4,10 +4,8 @@
 #define USE_SERVER  true
 #define FBO_DRAW_MIDDLE_ONLY true
 
-
 /*
- When using bUseFbo: can I use the fbo from the visualizer directly? 
- 
+ When using bUseFbo: can I use the fbo from the visualizer directly?
  */
 
 //--------------------------------------------------------------
@@ -44,7 +42,7 @@ void ofApp::setup() {
 //    ofSetBackgroundAuto(false);
 //    ofSetVerticalSync(true);
     ofSetFrameRate(frameRate);
-    ofEnableSmoothing(); // CAUSES FRAMERATE DROPS
+//    ofEnableSmoothing(); // CAUSES FRAMERATE DROPS
     
     
 //    ofEnableAlphaBlending();
@@ -72,7 +70,12 @@ void ofApp::setup() {
     syphonServer.setName("visualizer");
 #endif
     
-//    visualizer->addEvent((Event*)new JPhysarum(glm::vec2(0, 0), glm::vec2(1024, 1024)), NON_CAM_FRONT);
+//    visualizer->addEvent((Event*)new JPhysarum(glm::vec2(0, 0), glm::vec2(512, 512)), NON_CAM_FRONT);
+//    visualizer->getLast()->setColor(ofColor::white);
+        
+//    ofSetWindowShape(200, 200);
+//    ofSetFrameRate(60);
+    ofEnableAlphaBlending();
 }
 
 
@@ -80,7 +83,7 @@ void ofApp::setup() {
 void ofApp::update() {
 //    if(!bFullScreen)
     ofSetWindowTitle(ofToString((int)ofGetFrameRate()));
-
+    
     while(SCreceiver.hasWaitingMessages()){
         msg.clear();
         SCreceiver.getNextMessage(msg);
@@ -89,7 +92,7 @@ void ofApp::update() {
             bSCClientSet = true;
         }
         parser->parseMsg(msg);
-        receive(msg);
+        receive(msg); // Should be replaced totally by MsgParser!
     }
     while(GUIreceiver.hasWaitingMessages()){
         msg.clear();
@@ -118,17 +121,7 @@ void ofApp::update() {
         ofClear(0);
         visualizer->update();
         visualizer->display();
-//        ofNoFill();
-//        ofSetLineWidth(10);
-//        ofSetColor(255);
-        
-//        ofDrawRectangle(0, 0, f.getWidth() * (1/3.) - 5, f.getHeight() - 5);
-//        ofDrawRectangle(f.getWidth() * (1/3.), 0, f.getWidth() * (2/3.) - 5, f.getHeight() - 5);
-//        ofDrawRectangle(f.getWidth() * (2/3.), 0, f.getWidth() * (3/3.) - 5, f.getHeight() - 5);
-//        ofNoFill();
-//        ofDrawRectangle(0, 0, f.getWidth() / 3, f.getHeight());
-//        ofDrawRectangle((f.getWidth() / 3), 0, f.getWidth() / 3, f.getHeight());
-        
+
         f.end();
         
 //        left.begin();
@@ -163,40 +156,28 @@ void ofApp::update() {
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofBackground(255,0,0);
-    ofSetColor(255);
-    ofDrawRectangle(0, 0, 100, 100);
-    
-//    return;
-//    if(bUseFbo){
-    ofSetColor(255, 255 - visualizer->fade->colors[0].a);
-        switch(fboDisplayMode){
-            case 0:
-                visualizer->fbo.getTexture().bind();
-                mesh.draw();
-                visualizer->fbo.getTexture().unbind();
-                if(bEditMode){
-                    for(char i=0; i<4; i++)
-                        ofDrawCircle(meshVertices[i], 10);
-                }
-                break;
-            case 1: // Stretch
-                visualizer->fbo.draw(0, 0, ofGetWidth(), ofGetHeight());
-                break;
-            case 2: //
-                visualizer->fbo.draw(0, ofGetHeight() * 0.5 - (0.5 * (ofGetHeight() / (f.getWidth() / ofGetWidth()))), ofGetWidth(), ofGetHeight() / (f.getWidth() / ofGetWidth()));
-                break;
-        }
-//    visualizer->fade->display();
-//    } else{
-//        visualizer->display();
-//    }
+    ofBackground(0);
+    ofSetColor(255, visualizer->brightness); // Brightness = alpha of fbo w/ black background?
+    switch(fboDisplayMode){
+        case 0:
+            visualizer->fbo.getTexture().bind();
+            mesh.draw();
+            visualizer->fbo.getTexture().unbind();
+            if(bEditMode){
+                for(char i=0; i<4; i++)
+                    ofDrawCircle(meshVertices[i], 10);
+            }
+            break;
+        case 1: // Stretch
+            visualizer->fbo.draw(0, 0, ofGetWidth(), ofGetHeight());
+            break;
+        case 2: //
+            visualizer->fbo.draw(0, ofGetHeight() * 0.5 - (0.5 * (ofGetHeight() / (f.getWidth() / ofGetWidth()))), ofGetWidth(), ofGetHeight() / (f.getWidth() / ofGetWidth()));
+            break;
+    }
+    visualizer->drawMask();
     if(bTemp)
         ofSaveFrame();
-//    ofSetColor(255);
-    
-//    ofDrawRectangle(0, 0, 100, 100);
-//    visualizer->getLast()->display();
 }
 
 //--------------------------------------------------------------
@@ -214,20 +195,12 @@ void ofApp::windowResized(int w, int h){
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
 	switch(key) {
-//        case 'm':
-////            visualizer->bMask = !visualizer->bMask;
-//            break;
-//        case 's':
-//            bSaveFbo = true;
-//            bTemp = !bTemp;
-//            break;
         case 'r':{
             ofxOscMessage m;
             m.setAddress("/allEvents");
             m.addIntArg(3);
             SCsender.sendMessage(m);
         }
-            
             break;
         case 'q':
             fboDisplayMode = 0;
@@ -242,14 +215,6 @@ void ofApp::keyPressed(int key) {
             bEditMode = !bEditMode;
             break;
         case 'f':{
-//            mesh.clearVertices();
-//            vector<ofVec3f> meshVertices(4);
-//            meshVertices[0] = ofVec3f(0,0);
-//            meshVertices[1] = ofVec3f(ofGetScreenWidth(), 0);
-//            meshVertices[2] = ofVec3f(ofGetScreenWidth(), ofGetScreenHeight());
-//            meshVertices[3] = ofVec3f(0, ofGetScreenHeight());
-//            for(char i=0; i<4; i++)
-//                mesh.addVertex(meshVertices[i]);
             bFullScreen = !bFullScreen;
             ofSetFullscreen(bFullScreen);
         }
@@ -281,8 +246,7 @@ void ofApp::mousePressed(int x, int y, int button){
         mesh.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
         
         for(char i=0; i<4; i++){
-//            mesh.addTexCoord(texCoords[i] + ofVec2f(1280, 0)); // Center piece
-            mesh.addTexCoord(texCoords[i]); // Center piece
+            mesh.addTexCoord(texCoords[i]);
             mesh.addVertex(meshVertices[i]);
         }
     }
@@ -368,8 +332,9 @@ void ofApp::receive(ofxOscMessage m){
             song->doControlFunc(m.getArgAsInt(0), m.getArgAsInt(1));
     } else if(a == "/loadSong"){
         loadSong(m.getArgAsString(0));
-    } else if(a == "/setFade"){
-        visualizer->fade->setBrightness(m.getArgAsInt(0));
+    } else if(a == "/setFade"){ // Replaced this, so it's not calling fadeScreen (was probably used in raw SC code? Or JUCE gui?
+        cout << "/setFade called, use /setBrightness instead (and send to MsgParser, instead of here: check code" << endl;
+        visualizer->setBrightness(m.getArgAsInt(0));
     } else if(a == "/killAll"){
         visualizer->killAll();
     } else if(a == "/bMirror"){
@@ -497,7 +462,7 @@ void ofApp::receiveSpaceNav(ofxOscMessage m){
     visualizer->cam.dolly(m.getArgAsFloat(1));
     visualizer->cam.boom(m.getArgAsFloat(2));
     
-    visualizer->cam.rotate(m.getArgAsFloat(3), ofVec3f(1, 0, 0));
-    visualizer->cam.rotate(m.getArgAsFloat(4), ofVec3f(0, 1, 0));
-    visualizer->cam.rotate(m.getArgAsFloat(5), ofVec3f(0, 0, 1));
+    visualizer->cam.rotateDeg(m.getArgAsFloat(3), ofVec3f(1, 0, 0));
+    visualizer->cam.rotateDeg(m.getArgAsFloat(4), ofVec3f(0, 1, 0));
+    visualizer->cam.rotateDeg(m.getArgAsFloat(5), ofVec3f(0, 0, 1));
 }

@@ -31,7 +31,6 @@
 #include "RectangleMask.hpp"
 
 #include "AlphaBlackScreen.hpp"
-#include "fadeScreen.hpp"
 #include "Mapper.hpp"
 #include "Colors.hpp"
 #include "Wavetables.hpp"
@@ -60,6 +59,7 @@ typedef unsigned char uint8;
     
     void setAlpha(int alpha, bool bDo = true);
     void setBrightness(unsigned char b);
+    int brightness = 255;
     
     void killAll();
 
@@ -88,7 +88,6 @@ typedef unsigned char uint8;
 //    void fitFadeScreen(glm::vec2 size = glm::vec2(0, 0));
     void makeFit(glm::vec2 size);
     
-    fadeScreen* fade = nullptr;
     AlphaBlackScreen* alphaScreen = nullptr;
     
     vector<Mapper*> mappers;
@@ -138,6 +137,7 @@ typedef unsigned char uint8;
 //    ofFbo sharedFbo, sharedFbo2;
     ofFbo circularMask;
     bool bDrawCirclularMask = false;
+    void drawMask();
     
     void initCircularMaskFbo(glm::vec2 size, int num=1);
 private:

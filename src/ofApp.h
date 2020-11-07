@@ -59,6 +59,7 @@ class ofApp : public ofBaseApp {
     void windowResized(int w, int h);
 
     Visualizer* visualizer = nullptr;
+//    JPhysarum
     ofxOscReceiver GUIreceiver;
     ofxOscReceiver SCreceiver;
     ofxOscReceiver spaceNavReceiver;

@@ -22,10 +22,6 @@ Visualizer::Visualizer(glm::vec2 size){
     zoomPP->setEnabled(false);
 #endif
 
-
-    fade = new fadeScreen();
-    addEvent((Event*)fade, NUMLAYERS-1);
-
     alphaScreen = new AlphaBlackScreen(true);
     alphaScreen->size = size;
     addEvent((Event*)alphaScreen, 0);
@@ -52,6 +48,9 @@ Visualizer::Visualizer(glm::vec2 size){
 #else
     fbo.allocate(size.x, size.y, GL_RGBA);
 #endif
+    fbo.begin();
+    ofClear(0, 0);
+    fbo.end();
     
     initCam();
 //    sharedFbo.allocate(2560, 800, GL_RGBA);
@@ -117,15 +116,11 @@ void Visualizer::display(){
         ofTranslate(ofGetWindowWidth(), 0);
         ofRotateY(180);
         
-        for(uint8 i=2; i<layers.size()-2; i++){ // Everything except alphascreen, fade and non-camera-layer
+        for(uint8 i=2; i<layers.size()-2; i++){ // Everything except alphascreen and non-camera-layer
             layers[i]->displayMain();
         }
 
         ofPopMatrix();
-    }
-    if(bMask){
-        ofSetColor(255, maskBrightness);
-//        mask.draw(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
     }
     
 #if USE_PP
@@ -133,13 +128,6 @@ void Visualizer::display(){
         // set gl state back to original
         glPopAttrib();
 #endif
-    
-    if(bDrawCirclularMask){
-        ofSetColor(255);
-        circularMask.draw(0, 0);
-    }
-    
-    fade->display();
 }
 
 void Visualizer::update(){
@@ -155,25 +143,25 @@ void Visualizer::update(){
 //    ofEnableBlendMode(OF_BLENDMODE_ADD);
 //    ofEnableDepthTest();
     fbo.begin();
-        ofEnableSmoothing();
+//        ofEnableSmoothing();
         alphaScreen->displayMain();
         layers[1]->displayMain(); // Non-cam layer back
 
-    if(bCam){
-        ofPushMatrix();
-        cam.begin();
-        ofScale(1, -1, 1);
-        ofTranslate(-ofGetWidth()/2., -ofGetHeight()/2.);
-    }
-        for(uint8 i=2; i<layers.size()-2; i++) // Don't draw the last one, that's fade, happens at end
+        if(bCam){
+            ofPushMatrix();
+            cam.begin();
+            ofScale(1, -1, 1);
+            ofTranslate(-ofGetWidth()/2., -ofGetHeight()/2.);
+        }
+        for(uint8 i=2; i<layers.size()-2; i++) // Don't draw the last one, that's fade, happens at end // But I removed this, so now we have one layer too much
             layers[i]->displayMain();
-    if(bCam){
+        if(bCam){
             cam.end();
         ofPopMatrix();
-    }
+        }
 
         layers[NUMLAYERS-2]->displayMain(); // Non-cam layer front
-        ofClearAlpha();
+//        ofClearAlpha();
     fbo.end();
 }
 
@@ -203,10 +191,8 @@ Event* Visualizer::addEvent(Event* e, int layerIndex, unsigned short index){ // 
             }
             events[index] = e; // For accessing events later, with id
             cout << "Added to ptrs[] w/ index: " << index << endl;
-    //        numEventsAdded++;
         } else{
             cout << "Can't save new event, need a reset? SC should notice this and call killAll() ?" << endl;
-//            killAll();
             return nullptr;
         }
     }
@@ -256,22 +242,11 @@ void Visualizer::setAlpha(int alpha, bool bDo){
 }
 
 void Visualizer::setBrightness(unsigned char b){
-    fade->setBrightness(b);
+    brightness = b;
 }
 
-void Visualizer::addMapper(Mapper* m){
-//    bool alreadyExists = false;
-//    for(int i=0; i<mappers.size(); i++){
-//        if(mappers[i]->listenID == m->listenID && mappers[i]->link->name == m->link->name){
-//            alreadyExists = true;
-//        }
-//    }
-//    if(!alreadyExists){
+void Visualizer::addMapper(Mapper* m){ // Not using this for >3 years I guess
     mappers.push_back(m);
-//    } else{
-//        delete m;
-//        cout << "Mapper already exists!" << endl;
-//    }
 }
 
 void Visualizer::killAll(){
@@ -294,23 +269,12 @@ void Visualizer::killAll(){
 void Visualizer::makeFit(glm::vec2 size){
     if(this->size == size)
         return;
-    fade->size = size;
     alphaScreen->size = size;
     if(fbo.getWidth() != size.x || fbo.getHeight() != size.y){
         fbo.allocate(size.x, size.y, fbo.getTexture().getTextureData().glInternalFormat);
     }
     this->size = size;
 }
-//void Visualizer::fitFadeScreen(glm::vec2 size){
-//    cout << size << endl;
-//    if(fade->size == size)
-//        return;
-//    if(size == glm::vec2(0, 0)){
-//        fade->size = ofGetWindowSize();
-//    } else{
-//        fade->size = size;
-//    }
-//}
 
 vector<float> Visualizer::vec(float a){
     vector<float> v;
@@ -447,4 +411,15 @@ void Visualizer::initCircularMaskFbo(glm::vec2 size, int num){
         }
     }
     circularMask.getTexture().loadData(p);
+}
+
+void Visualizer::drawMask(){
+    if(bMask){
+        ofSetColor(255, maskBrightness);
+        mask.draw(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
+    }
+    if(bDrawCirclularMask){
+        ofSetColor(255);
+        circularMask.draw(0, 0);
+    }
 }

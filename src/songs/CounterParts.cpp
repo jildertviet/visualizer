@@ -19,8 +19,6 @@ CounterParts::CounterParts(Visualizer* v){
 //    ps->forces[0]->power = 300;
     ps->bMirrorMouse = false; // Was true
 //    ofHideCursor();
-    v->fade->setWidth(ofGetWidth()+200);
-    v->fade->setHeight(ofGetHeight()+100);
     
     vecField = (JVecField*)addEvent(new JVecField());
     vecField->speed = 0.01;

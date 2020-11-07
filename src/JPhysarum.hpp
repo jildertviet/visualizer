@@ -32,6 +32,9 @@ public:
     
     void swap(){
         std::swap(src,dst);
+//        ofFbo* t = src;
+//        src = dst;
+//        dst = t;
     }
     
     void clear(){
@@ -59,9 +62,9 @@ public:
     float sensorAngle = 45;
     float sensorDistance = 20;
     float turnAngle = 45;
-    float depositAmount = 40;
+    float depositAmount = 60;
     float balance = 0.5;
-    float decay = 0.5;
+    float decay = 0.98;
     float blurMix;
     
 private:
