@@ -277,8 +277,6 @@ void ofApp::loadSong(string name){
         song = new Faith(visualizer);
     } else if(name=="Figgie"){
         song = new Figgie(visualizer);
-    } else if(name=="Juncture"){
-        song = new Juncture(visualizer);
     } else if(name=="MamaOtis"){
         song = new MamaOtis(visualizer);
     } else if(name=="MaybeTomorrow"){

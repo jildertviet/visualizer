@@ -92,7 +92,6 @@ private:
     vector<string> songs = {
         "Faith",
         "Figgie",
-        "Juncture",
         "MamaOtis",
         "MaybeTomorrow",
         "TimeForYou",

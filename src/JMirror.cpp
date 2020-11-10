@@ -13,6 +13,7 @@ JMirror::JMirror(){
     ySpeed = ofRandom(1.0);
     view = ofVec2f(100+ofRandom(ofGetWindowWidth()-size.x-100), 100+ofRandom(ofGetWindowHeight()-size.y-100));
     speed = ofRandom(0.3, 0.5);
+    colors[0] = ofColor(255, 255, 255, 0);
 }
 
 JMirror::JMirror(ofVec2f size_, ofVec2f loc_){
@@ -59,8 +60,10 @@ void JMirror::display(){
     }
     ofFill();
     ofPopMatrix();
-    if(draw_view)
+    if(draw_view){
+        ofSetColor(255);
         displayView();
+    }
 }
 
 void JMirror::moveTriangle(){
