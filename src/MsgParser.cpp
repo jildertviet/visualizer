@@ -91,7 +91,9 @@ MsgParser::MsgParser(Visualizer* v){
         "decay",
         "deposit",
         "balance",
-        "fill"
+        "fill",
+        "radius",
+        "evolve"
     };
     for(short i=0; i<valueKeys.size(); i++)
         values[valueKeys[i]] = i + 1;
@@ -391,7 +393,8 @@ void MsgParser::setVal(ofxOscMessage& m){ // Default: /setVal, 0, "size", 100, 2
                 break;
             case 5: // Speed
 //                cout << "Set speed: " << m.getArgAsFloat(2) << endl;
-                e->speed = m.getArgAsFloat(2);
+//                e->speed = m.getArgAsFloat(2);
+                e->setSpeed(m.getArgAsFloat(2));
                 break;
             case 6: // Direction
                 e->direction = ofVec2f(m.getArgAsFloat(2), m.getArgAsFloat(3));
@@ -505,6 +508,12 @@ void MsgParser::setVal(ofxOscMessage& m){ // Default: /setVal, 0, "size", 100, 2
             case 29:
                 e->bFill = m.getArgAsBool(2);
                 break;
+            case 30: // Radius
+                
+                break;
+            case 31: // evolve
+                e->bEvolve = m.getArgAsBool(2);
+                break;
         }
     } else{
         cout << "Event not found, id: " << m.getArgAsInt(0) << endl;
@@ -534,6 +543,11 @@ void MsgParser::addTo(ofxOscMessage& m){
                     e->size = e->size + ofVec3f(m.getArgAsInt(2), m.getArgAsInt(3), 0);
                 } else if(m.getNumArgs() == 5){ // 3d
                     e->size = e->size + ofVec3f(m.getArgAsInt(2), m.getArgAsInt(3), m.getArgAsInt(4));
+                }
+                break;
+            case 30: // radius
+                if(e->type == "MultiMesh"){
+                    ((MultiMesh*)e)->addRadius(m.getArgAsFloat(2));
                 }
                 break;
         }

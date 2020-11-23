@@ -18,7 +18,7 @@ MultiMesh::MultiMesh(int size, ofFloatColor color){
     
     pulseOsc = new Wavetable(bpm/60, 0, 2); pulseOsc->pulseWidth = 1./8; pulseOsc->setMode(2);
     pulseMoveWidth = ofRandom(100);
-    
+    bMove = false;
 //    generateSymmetricMeshes(numMeshes); // Default.
 }
 
@@ -176,7 +176,7 @@ void MultiMesh::morph(){
 //                ofVec2f vertex = meshes[meshNum].getVertex(numVertices);
                 ofVec3f vertex = locations[meshNum][numVertices];
                 vertex -= (ofGetWindowSize()/2.);
-                vertex = vertex.rotate(morphAngle, ofVec3f(1, 0, 0));
+                vertex = vertex.rotate(morphAngle, ofVec3f(0, 0, 1));
                 vertex += (ofGetWindowSize()/2.);
 //                meshes[meshNum].setVertex(numVertices, vertex);
                 locations[meshNum][numVertices]=vertex;
@@ -199,11 +199,6 @@ void MultiMesh::fadeOut(){
 
 void MultiMesh::deleteWithFade(int releaseTime){
     bFadeOut = true;
-//    vector<float> values = {0, 0};
-//    values[0] = colors[0].a;
-//    addEnv(values, vector<float>{(float)releaseTime}, &colors[0]);
-//    setEndTime(releaseTime);
-    
     Event::deleteWithFade(releaseTime);
     active = true;
 }
@@ -319,22 +314,22 @@ void MultiMesh::addRandomMesh(float radiusTemp, ofFloatColor color){
     }
 }
 
-void MultiMesh::doubleTime(){
-    for(int i=0; i<numMeshes; i++){
-        for(int j=0; j<meshes[i].getNumVertices(); j++){
-            wavetables[i][j]->freq = wavetables[i][j]->freq*2;
-            wavetables[i][j]->retrigger();
-        }
-    }
-}
-
-void MultiMesh::halfTime(){
-    for(int i=0; i<numMeshes; i++){
-        for(int j=0; j<meshes[i].getNumVertices(); j++){
-            wavetables[i][j]->freq = wavetables[i][j]->freq*0.5;
-        }
-    }
-}
+//void MultiMesh::doubleTime(){
+//    for(int i=0; i<numMeshes; i++){
+//        for(int j=0; j<meshes[i].getNumVertices(); j++){
+//            wavetables[i][j]->freq = wavetables[i][j]->freq*2;
+//            wavetables[i][j]->retrigger();
+//        }
+//    }
+//}
+//
+//void MultiMesh::halfTime(){
+//    for(int i=0; i<numMeshes; i++){
+//        for(int j=0; j<meshes[i].getNumVertices(); j++){
+//            wavetables[i][j]->freq = wavetables[i][j]->freq*0.5;
+//        }
+//    }
+//}
 
 void MultiMesh::changeColor(ofFloatColor color){
     for(int i=0; i<numMeshes; i++){
@@ -351,8 +346,6 @@ void MultiMesh::addRadius(float radiusIncrease){
             newLoc-=ofGetWindowSize()/2.;
             ofVec2f copy = newLoc;
             newLoc = (copy.normalize()*radiusIncrease);
-//            newLoc+=ofGetWindowSize()/2.;
-//            meshes[i].setVertex(j, newLoc);
             locations[i][j] += newLoc;
         }
     }
@@ -403,29 +396,12 @@ void MultiMesh::setFrequency(float freq, float* multipliers, int size){
 }
 
 void MultiMesh::setFrequency(float freq, float a, float b, float c){
-    int r = ofRandom(3);
-    float multiplier;
-    
+    float multiplier = a;
     for(int i=0; i<numMeshes; i++){
-        int r = ofRandom(3);
-        float multiplier;
-        switch (r) {
-            case 0:
-                multiplier = a;
-                break;
-            case 1:
-                multiplier = b;
-                break;
-            case 2:
-                multiplier = c;
-                break;
-            default:
-                multiplier = a;
-                break;
-        }
-        for(int j=0; j<meshes[i].getNumVertices(); j++){
+        float options[3] = {a,b,c};
+        float multiplier = options[(int)ofRandom(3)];
+        for(int j=0; j<meshes[i].getNumVertices(); j++)
             wavetables[i][j]->freq = freq*multiplier;
-        }
     }
     pulseOsc->freq = freq * multiplier;
 }
@@ -463,7 +439,7 @@ void MultiMesh::changeLocations(){
 }
 
 void MultiMesh::moveWithPulse(){
-    if(bMoveWithPulse){
+    if(bMove){
         for(int i=0; i<numMeshes; i++){
             for(int j=0; j<meshes[i].getNumVertices(); j++){
                 ofVec3f toAdd = locations[i][j];
@@ -478,7 +454,7 @@ void MultiMesh::moveWithPulse(){
 }
 
 void MultiMesh::moveOutVertex(int index){
-    if(bMoveOutVertext){
+    if(bEvolve){
         for(int i=0; i<numMeshes; i++){
             ofVec2f loc = locations[i][index];
             ofVec2f direction = (loc-ofGetWindowSize()/2.).normalize();
@@ -583,9 +559,28 @@ void MultiMesh::customOne(){
 }
 
 void MultiMesh::customTwo(){
-    bpm = customOneArguments[0];
+    doMorph(customOneArguments[0], customOneArguments[1]);
 }
 
 void MultiMesh::customThree(){
     setFrequency(customOneArguments[0], customOneArguments[1], customOneArguments[2], customOneArguments[3]);
+}
+
+void MultiMesh::customFour(){
+    float r = customOneArguments[0];
+    ofColor c = ofColor(customOneArguments[1], customOneArguments[2], customOneArguments[3], customOneArguments[4]);
+    addRandomMesh(r, c);
+}
+
+void MultiMesh::customFive(){
+    bGrowRadius = customOneArguments[0];
+}
+
+void MultiMesh::setSpeed(float speed){
+    for(int i=0; i<numMeshes; i++){
+        for(int j=0; j<meshes[i].getNumVertices(); j++){
+            wavetables[i][j]->freq = wavetables[i][j]->freq*speed;
+            
+        }
+    }
 }

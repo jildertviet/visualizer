@@ -78,8 +78,7 @@ void ofApp::setup() {
     ofEnableAlphaBlending();
 }
 
-
-//--8------------------------------------------------------------
+//--------------------------------------------------------------
 void ofApp::update() {
 //    if(!bFullScreen)
     ofSetWindowTitle(ofToString((int)ofGetFrameRate()));

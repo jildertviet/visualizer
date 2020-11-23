@@ -47,7 +47,9 @@ public:
     ofVec3f size, loc, direction;
     vector<ofColor> colors;
     float speed = 1.;
+    virtual void setSpeed(float speed);
     bool bMove = false;
+    bool bEvolve = false;
 
     Event* next = nullptr;
     Event* previous = nullptr;

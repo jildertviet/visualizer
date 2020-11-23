@@ -71,7 +71,7 @@ Env::Env(vector<float> levels, vector<float> times, ofColor* c, char curve){
 }
 
 Env::Env(vector<float> levels, vector<float> times, float* f, ofxeasing::function func){
-    this->levels = levels; this->times = times; ptr = new Pointer(f); this->curve = curve; startTime = ofGetElapsedTimeMillis();
+    this->levels = levels; this->times = times; ptr = new Pointer(f); startTime = ofGetElapsedTimeMillis();
     
     totalRunTime = times[0]; getDirection();
     this->curveType = func;

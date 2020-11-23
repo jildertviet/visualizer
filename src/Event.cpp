@@ -320,3 +320,4 @@ bool Event::checkIfEnvExists(char id){
 void Event::setSize(ofVec3f s){size = s;}
 void Event::setMode(char m){ mode = m; }
 void Event::setLoc(ofVec3f loc){this->loc = loc;}
+void Event::setSpeed(float speed){this->speed = speed;}

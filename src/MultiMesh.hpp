@@ -46,7 +46,7 @@ public:
     
     void addRandomMesh(float radius, ofFloatColor color = ofFloatColor(1,1,1,1));
     
-    void doubleTime(); void halfTime();
+//    void doubleTime(); void halfTime();
     void changeColor(ofFloatColor color);
     void addRadius(float radiusIncrease);
     void growRadius(int direction, float speed); bool bGrowRadius=false;
@@ -62,13 +62,14 @@ public:
     float radius;
     void changeLocations();
     
-    bool bMoveWithPulse = false; void moveWithPulse(); Wavetable* pulseOsc;
+    void moveWithPulse(); Wavetable* pulseOsc;
     int pulseMoveWidth; int centerPulseRadius = 50;
+    void setSpeed(float speed) override;
     
     float radiusAdd = 3;
     bool bCenterPulse = true;
     
-    void moveOutVertex(int index); bool bMoveOutVertext = false;
+    void moveOutVertex(int index);
     
     float globalAlphaAdd = 0.1;
     
@@ -81,5 +82,7 @@ public:
     void customOne() override;
     void customTwo() override;
     void customThree() override;
+    void customFour() override;
+    void customFive() override;
 };
 #endif /* MultiMesh_hpp */

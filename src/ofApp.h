@@ -8,7 +8,6 @@
 
 #ifndef TARGET_RASPBERRY_PI
     #include "CounterParts.hpp"
-    #include "eLive.hpp"
 #endif
 
 #include "Figgie.hpp"
@@ -16,7 +15,6 @@
 #include "Faith.hpp"
 #include "MamaOtis.hpp"
 #include "MaybeTomorrow.hpp"
-#include "Juncture.hpp"
 #include "JustBefore.hpp"
 #include "TeachMe.hpp"
 #include "BendStraws.hpp"
