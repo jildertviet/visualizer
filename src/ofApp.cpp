@@ -280,8 +280,6 @@ void ofApp::loadSong(string name){
         song = new MamaOtis(visualizer);
     } else if(name=="MaybeTomorrow"){
         song = new MaybeTomorrow(visualizer);
-    } else if(name=="TimeForYou"){
-        song = new TimeForYou(visualizer);
     } else if(name=="JustBefore"){
         song = new JustBefore(visualizer);
     } else if(name=="BendStraws"){

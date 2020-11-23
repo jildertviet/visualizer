@@ -115,7 +115,7 @@ typedef unsigned short uint16;
     ofVec2f circleRatio = ofVec2f(1,1);
     
     void setZ(int z);
-    void setLoc(ofVec3f newLoc);
+    void setLoc(ofVec3f newLoc) override;
 private:
 
 };
