@@ -509,7 +509,8 @@ void MsgParser::setVal(ofxOscMessage& m){ // Default: /setVal, 0, "size", 100, 2
                 e->bFill = m.getArgAsBool(2);
                 break;
             case 30: // Radius
-                
+                if(e->type == "SpaceCube")
+                    ((SpaceCube*)e)->radius = m.getArgAsFloat(2);
                 break;
             case 31: // evolve
                 e->bEvolve = m.getArgAsBool(2);

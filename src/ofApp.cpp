@@ -282,8 +282,6 @@ void ofApp::loadSong(string name){
         song = new MaybeTomorrow(visualizer);
     } else if(name=="JustBefore"){
         song = new JustBefore(visualizer);
-    } else if(name=="BendStraws"){
-        song = new BendStraws(visualizer);
     } else if(name=="TeachMe"){
         song = new TeachMe(visualizer);
     } else if(name=="CounterParts"){

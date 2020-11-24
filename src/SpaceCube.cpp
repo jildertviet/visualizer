@@ -11,11 +11,12 @@
 SpaceCube::SpaceCube(ofVec3f loc_, ofVec3f size_, int points_amount_, int gridsize){
     setType("SpaceCube");
     setMode(1);
+    
     size = size_;
     pointsAmount = points_amount_;
     loc = loc_;
     this->gridsize = gridsize;
-    grid_division = 4;
+    
     offset = ofVec3f(ofRandom(-size.x, size.x),ofRandom(-size.y, size.y),ofRandom(-size.z, size.z));
     offset *= 0.2;
     
@@ -39,7 +40,17 @@ void SpaceCube::ownDtor(){ removeFromVector(); }
 
 
 void SpaceCube::customOne(){
-    rotateRotationSpeed();
+    bool bAdd = customOneArguments[0];
+    int num = customOneArguments[1];
+    for(int i=0; i<num; i++){
+        if(bAdd){
+//            if(mesh.getNumVertices() < 7)
+            placeNewPoint(ofVec3f(), true);
+        } else{
+            if(mesh.getNumVertices() > 3)
+                removeLastVertex();
+        }
+    }
 }
 
 void SpaceCube::customTwo(){
@@ -57,6 +68,8 @@ void SpaceCube::customFour(){
 void SpaceCube::customFive(){ // Resize
     size.x = customOneArguments[0];
     size.y = customOneArguments[1];
+    pointsAmount = customOneArguments[2];
+    gridsize = customOneArguments[3];
     mesh.clear();
     for(int i=0; i<pointsAmount; i++)
         placeNewPoint(ofVec3f(), true);
@@ -64,7 +77,7 @@ void SpaceCube::customFive(){ // Resize
 
 void SpaceCube::display(){
     ofPushMatrix();
-    ofVec3f translate = ofVec3f(ofGetWindowWidth()/2., ofGetWindowHeight()/2., 0) + offset + loc;
+    glm::vec2 translate = glm::vec2(ofGetWindowWidth()/2., ofGetWindowHeight()/2.) + offset + loc;
     ofTranslate(translate);
     rotateY();
     rotateX();

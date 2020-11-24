@@ -16,7 +16,6 @@
 #include "MaybeTomorrow.hpp"
 #include "JustBefore.hpp"
 #include "TeachMe.hpp"
-#include "BendStraws.hpp"
 #include "Trying.hpp"
 #include "Laura.hpp"
 #include "Start.hpp"

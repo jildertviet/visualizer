@@ -24,9 +24,7 @@ public:
     void display() override;
     
     ofVec3f offset;
-    
-    int grid_division;
-    
+        
     int rotation_direction = 1;
     float rotation_speed;
     int gridsize;
