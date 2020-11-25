@@ -77,7 +77,7 @@ void SpaceCube::customFive(){ // Resize
 
 void SpaceCube::display(){
     ofPushMatrix();
-    glm::vec2 translate = glm::vec2(ofGetWindowWidth()/2., ofGetWindowHeight()/2.) + offset + loc;
+    glm::vec3 translate = glm::vec3(ofGetWindowWidth()/2., ofGetWindowHeight()/2., 0) + offset + loc;
     ofTranslate(translate);
     rotateY();
     rotateX();

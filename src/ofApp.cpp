@@ -280,8 +280,6 @@ void ofApp::loadSong(string name){
         song = new MamaOtis(visualizer);
     } else if(name=="MaybeTomorrow"){
         song = new MaybeTomorrow(visualizer);
-    } else if(name=="JustBefore"){
-        song = new JustBefore(visualizer);
     } else if(name=="TeachMe"){
         song = new TeachMe(visualizer);
     } else if(name=="CounterParts"){
@@ -290,8 +288,6 @@ void ofApp::loadSong(string name){
 #else
         cout << "Counterparts song not available on RBPi" << endl;
 #endif
-    } else if(name=="Trying"){
-        song = new Trying(visualizer);
     } else if(name=="Laura"){
         song = new Laura(visualizer);
     } else if(name=="Start"){

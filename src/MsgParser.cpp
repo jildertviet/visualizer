@@ -576,10 +576,6 @@ void MsgParser::addEnv(ofxOscMessage& m){
                     values[i] = e->colors[0].a;
             }
             e->addEnvAlpha(values, times);
-            if(m.getArgAsBool(9)){ // bKill
-                e->setEndTime(times[0] + times[1] + times[2] + 1);
-                e->active = true;
-            }
         }
             break;
         case 4:{ // lijnMax
@@ -607,15 +603,17 @@ void MsgParser::addEnv(ofxOscMessage& m){
             if(bSave) // Saves the envelope as a txt file when done.
                 envTemp->setSave();
         }
-            return;
             break;
         case 11: {// selectedPoly
             Env* envTemp = ((JDivisionGrid*)e)->addEnvSelectedPoly(values, times);
             if(bSave) // Saves the envelope as a txt file when done.
                 envTemp->setSave();
         }
-            return;
             break;
+    }
+    if(m.getArgAsBool(9)){ // bKill
+        e->setEndTime(times[0] + times[1] + times[2] + 1);
+        e->active = true;
     }
     if(bSave){ // Saves the envelope as a txt file when done.
         if(e->getLastEnv())
